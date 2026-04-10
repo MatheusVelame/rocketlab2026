@@ -16,8 +16,15 @@ export interface ProductPerformance {
   total_avaliacoes: number;
 }
 
+export interface ReviewSummary {
+  avaliacao: number;
+  comentario: string | null;
+  data_comentario: string | null;
+}
+
 export interface ProductAnalytics {
   id_produto: string;
   nome_produto: string;
   performance: ProductPerformance;
+  ultimas_avaliacoes: ReviewSummary[];
 }

@@ -20,6 +20,13 @@ export const productApi = {
         const response = await api.patch<Produto>(`/produtos/${id}`, data);
         return response.data;
     },
+    create: async (data: Produto) => {
+        const response = await api.post<Produto>('/produtos', data);
+        return response.data;
+    },
+    delete: async (id: string) => {
+        await api.delete(`/produtos/${id}`);
+    },
     getAnalytics: async (id: string) => {
         const response = await api.get<ProductAnalytics>(`/produtos/${id}/analytics`);
         return response.data;

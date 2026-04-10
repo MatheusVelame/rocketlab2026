@@ -45,6 +45,28 @@ def update_produto(id_produto: str, produto_update: ProdutoUpdate, db: Session =
     db.refresh(db_produto)
     return db_produto
 
+@router.post("/", response_model=Produto, status_code=201)
+def create_produto(produto: Produto, db: Session = Depends(get_db)):
+    db_exists = db.query(ProdutoModel).filter(ProdutoModel.id_produto == produto.id_produto).first()
+    if db_exists:
+        raise HTTPException(status_code=400, detail="ID de produto já cadastrado")
+    
+    new_product = ProdutoModel(**produto.model_dump())
+    db.add(new_product)
+    db.commit()
+    db.refresh(new_product)
+    return new_product
+
+@router.delete("/{id_produto}", status_code=204)
+def delete_produto(id_produto: str, db: Session = Depends(get_db)):
+    db_produto = db.query(ProdutoModel).filter(ProdutoModel.id_produto == id_produto).first()
+    if not db_produto:
+        raise HTTPException(status_code=404, detail="Produto não encontrado")
+    
+    db.delete(db_produto)
+    db.commit()
+    return None
+
 @router.get("/{id_produto}/analytics", response_model=ProductAnalytics)
 def get_produto_analytics(id_produto: str, db: Session = Depends(get_db)):
     db_produto = db.query(ProdutoModel).filter(ProdutoModel.id_produto == id_produto).first()
@@ -74,8 +96,22 @@ def get_produto_analytics(id_produto: str, db: Session = Depends(get_db)):
         total_avaliacoes=reviews_data.total_avaliacoes or 0
     )
 
+    # Últimas 5 avaliações
+    last_reviews = db.query(
+        AvaliacaoPedidoModel.avaliacao,
+        AvaliacaoPedidoModel.comentario,
+        AvaliacaoPedidoModel.data_comentario
+    ).join(
+        ItemPedidoModel, ItemPedidoModel.id_pedido == AvaliacaoPedidoModel.id_pedido
+    ).filter(
+        ItemPedidoModel.id_produto == id_produto
+    ).order_by(
+        AvaliacaoPedidoModel.data_comentario.desc()
+    ).limit(5).all()
+
     return ProductAnalytics(
         id_produto=db_produto.id_produto,
         nome_produto=db_produto.nome_produto,
-        performance=performance
+        performance=performance,
+        ultimas_avaliacoes=last_reviews
     )
