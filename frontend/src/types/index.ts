@@ -2,6 +2,7 @@ export interface Produto {
   id_produto: string;
   nome_produto: string;
   categoria_produto: string;
+  url_imagem?: string;
   peso_produto_gramas?: number;
   comprimento_centimetros?: number;
   altura_centimetros?: number;

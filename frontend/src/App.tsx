@@ -119,6 +119,15 @@ function App() {
             layoutId={p.id_produto}
             onClick={() => handleProductClick(p)}
           >
+            {p.url_imagem && (
+              <div style={{ height: '140px', overflow: 'hidden', borderRadius: '0.5rem', marginBottom: '1rem' }}>
+                <img
+                  src={p.url_imagem}
+                  alt={p.nome_produto}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              </div>
+            )}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
               <span className="badge">{p.categoria_produto}</span>
               <ShoppingBag size={20} color="var(--primary)" />
@@ -157,30 +166,43 @@ function App() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 50 }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '2rem' }}>
-                <div>
-                  <h2 style={{ margin: 0 }}>{isCreating ? 'Novo Produto' : selectedProduct?.nome_produto}</h2>
-                  <p style={{ color: 'var(--text-muted)' }}>{isCreating ? 'Cadastre as informações' : selectedProduct?.categoria_produto}</p>
-                </div>
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  {!isCreating && !isEditing && (
-                    <>
-                      <button onClick={handleEdit} style={{ background: 'var(--bg-app)', border: '1px solid var(--border)' }}>
-                        <Edit size={18} />
+              <div style={{ display: 'flex', gap: '2rem', marginBottom: '2rem' }}>
+                {selectedProduct?.url_imagem && (
+                  <div style={{ width: '200px', height: '200px', flexShrink: 0, borderRadius: '1rem', overflow: 'hidden' }}>
+                    <img
+                      src={selectedProduct.url_imagem}
+                      alt={selectedProduct.nome_produto}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                  </div>
+                )}
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
+                    <div>
+                      <h2 style={{ margin: 0 }}>{isCreating ? 'Novo Produto' : selectedProduct?.nome_produto}</h2>
+                      <p style={{ color: 'var(--text-muted)' }}>{isCreating ? 'Cadastre as informações' : selectedProduct?.categoria_produto}</p>
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      {!isCreating && !isEditing && (
+                        <>
+                          <button onClick={handleEdit} style={{ background: 'var(--bg-app)', border: '1px solid var(--border)' }}>
+                            <Edit size={18} />
+                          </button>
+                          <button onClick={() => selectedProduct && handleDelete(selectedProduct.id_produto)} style={{ background: 'transparent', border: '1px solid #ef4444', color: '#ef4444' }}>
+                            <Trash2 size={18} />
+                          </button>
+                        </>
+                      )}
+                      {(isEditing || isCreating) && (
+                        <button onClick={handleSave} style={{ background: 'var(--success)' }}>
+                          <Save size={18} />
+                        </button>
+                      )}
+                      <button onClick={() => { setSelectedProduct(null); setAnalytics(null); setIsEditing(false); setIsCreating(false); }} style={{ background: 'transparent' }}>
+                        <X size={24} />
                       </button>
-                      <button onClick={() => selectedProduct && handleDelete(selectedProduct.id_produto)} style={{ background: 'transparent', border: '1px solid #ef4444', color: '#ef4444' }}>
-                        <Trash2 size={18} />
-                      </button>
-                    </>
-                  )}
-                  {(isEditing || isCreating) && (
-                    <button onClick={handleSave} style={{ background: 'var(--success)' }}>
-                      <Save size={18} />
-                    </button>
-                  )}
-                  <button onClick={() => { setSelectedProduct(null); setAnalytics(null); setIsEditing(false); setIsCreating(false); }} style={{ background: 'transparent' }}>
-                    <X size={24} />
-                  </button>
+                    </div>
+                  </div>
                 </div>
               </div>
 

@@ -1,7 +1,7 @@
 import pandas as pd
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
-from app.models import Consumidor, Produto, Vendedor, Pedido, ItemPedido, AvaliacaoPedido
+from app.models import Consumidor, Produto, Vendedor, Pedido, ItemPedido, AvaliacaoPedido, CategoriaImagem
 from datetime import datetime
 
 def parse_date(date_str):
@@ -20,9 +20,21 @@ def parse_date(date_str):
 
 def seed_database():
     db: Session = SessionLocal()
+    from app.database import engine, Base
+    Base.metadata.create_all(engine)
     print("Iniciando a população do banco de dados...")
 
     try:
+        # 0. Popula Categorias de Imagens
+        print("Populando Categorias de Imagens...")
+        df_img = pd.read_csv("data/dim_categoria_imagens.csv")
+        for _, row in df_img.iterrows():
+            db.add(CategoriaImagem(
+                categoria=row['Categoria'],
+                url_imagem=row['Link']
+            ))
+        db.commit()
+
         # 1. Popula Consumidores
         print("Populando Consumidores...")
         df_cons = pd.read_csv("data/dim_consumidores.csv")

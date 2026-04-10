@@ -4,6 +4,7 @@ from typing import Optional
 class ProdutoBase(BaseModel):
     nome_produto: str
     categoria_produto: str
+    url_imagem: Optional[str] = None
     peso_produto_gramas: Optional[float] = None
     comprimento_centimetros: Optional[float] = None
     altura_centimetros: Optional[float] = None
