@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import List, Optional
 from datetime import datetime
 
@@ -14,8 +14,12 @@ class ReviewSummary(BaseModel):
     comentario: Optional[str]
     data_comentario: Optional[datetime]
 
+    model_config = ConfigDict(from_attributes=True)
+
 class ProductAnalytics(BaseModel):
     id_produto: str
     nome_produto: str
     performance: ProductPerformance
     ultimas_avaliacoes: List[ReviewSummary]
+
+    model_config = ConfigDict(from_attributes=True)

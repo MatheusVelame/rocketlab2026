@@ -7,23 +7,31 @@ import { motion, AnimatePresence } from 'framer-motion';
 function App() {
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState(0);
   const [selectedProduct, setSelectedProduct] = useState<Produto | null>(null);
   const [analytics, setAnalytics] = useState<ProductAnalytics | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [editForm, setEditForm] = useState<Partial<Produto>>({});
 
+  const PAGE_SIZE = 20;
+
   useEffect(() => {
     loadProducts();
-  }, [search]);
+  }, [search, page]);
 
   const loadProducts = async () => {
     try {
-      const data = await productApi.list(search);
+      const data = await productApi.list(search, page * PAGE_SIZE);
       setProdutos(data);
     } catch (error) {
       console.error('Erro ao carregar produtos', error);
     }
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+    setPage(0); // Volta para a primeira página ao buscar
   };
 
   const handleProductClick = async (product: Produto) => {
@@ -93,7 +101,7 @@ function App() {
               type="text"
               placeholder="Buscar produtos..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={handleSearchChange}
               style={{ paddingLeft: '40px', marginBottom: 0 }}
             />
           </div>
@@ -119,6 +127,24 @@ function App() {
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>ID: {p.id_produto}</p>
           </motion.div>
         ))}
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '3rem', alignItems: 'center' }}>
+        <button
+          onClick={() => setPage(page - 1)}
+          disabled={page === 0}
+          style={{ background: page === 0 ? 'var(--border)' : 'var(--primary)', cursor: page === 0 ? 'not-allowed' : 'pointer' }}
+        >
+          Anterior
+        </button>
+        <span style={{ color: 'var(--text-muted)' }}>Página {page + 1}</span>
+        <button
+          onClick={() => setPage(page + 1)}
+          disabled={produtos.length < PAGE_SIZE}
+          style={{ background: produtos.length < PAGE_SIZE ? 'var(--border)' : 'var(--primary)', cursor: produtos.length < PAGE_SIZE ? 'not-allowed' : 'pointer' }}
+        >
+          Próxima
+        </button>
       </div>
 
       <AnimatePresence>
@@ -228,30 +254,32 @@ function App() {
                       </div>
                     </div>
 
-                    <div style={{ marginTop: '2rem' }}>
-                      <h3>Últimas Avaliações</h3>
-                      {analytics.ultimas_avaliacoes.length > 0 ? (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                          {analytics.ultimas_avaliacoes.map((rev, idx) => (
-                            <div key={idx} style={{ background: '#0f172a', padding: '1rem', borderRadius: '0.75rem' }}>
-                              <div style={{ display: 'flex', gap: '4px', marginBottom: '0.5rem' }}>
-                                {[...Array(5)].map((_, i) => (
-                                  <Star key={i} size={14} fill={i < rev.avaliacao ? 'var(--accent)' : 'none'} color={i < rev.avaliacao ? 'var(--accent)' : 'var(--text-muted)'} />
-                                ))}
+                    {analytics && (
+                      <div style={{ marginTop: '2rem' }}>
+                        <h3>Últimas Avaliações</h3>
+                        {analytics.ultimas_avaliacoes.length > 0 ? (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            {analytics.ultimas_avaliacoes.map((rev, idx) => (
+                              <div key={idx} style={{ background: '#0f172a', padding: '1rem', borderRadius: '0.75rem' }}>
+                                <div style={{ display: 'flex', gap: '4px', marginBottom: '0.5rem' }}>
+                                  {[...Array(5)].map((_, i) => (
+                                    <Star key={i} size={14} fill={i < rev.avaliacao ? 'var(--accent)' : 'none'} color={i < rev.avaliacao ? 'var(--accent)' : 'var(--text-muted)'} />
+                                  ))}
+                                </div>
+                                <p style={{ margin: 0, fontSize: '0.9rem' }}>{rev.comentario || 'Sem comentário'}</p>
+                                {rev.data_comentario && (
+                                  <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                                    {new Date(rev.data_comentario).toLocaleDateString()}
+                                  </p>
+                                )}
                               </div>
-                              <p style={{ margin: 0, fontSize: '0.9rem' }}>{rev.comentario || 'Sem comentário'}</p>
-                              {rev.data_comentario && (
-                                <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                                  {new Date(rev.data_comentario).toLocaleDateString()}
-                                </p>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <p style={{ color: 'var(--text-muted)' }}>Nenhuma avaliação encontrada.</p>
-                      )}
-                    </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p style={{ color: 'var(--text-muted)' }}>Nenhuma avaliação encontrada.</p>
+                        )}
+                      </div>
+                    )}
                   </>
                 )
               )}

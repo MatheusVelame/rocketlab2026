@@ -8,8 +8,8 @@ const api = axios.create({
 });
 
 export const productApi = {
-    list: async (q?: string) => {
-        const response = await api.get<Produto[]>('/produtos', { params: { q } });
+    list: async (q?: string, skip: number = 0) => {
+        const response = await api.get<Produto[]>('/produtos', { params: { q, skip } });
         return response.data;
     },
     getOne: async (id: string) => {

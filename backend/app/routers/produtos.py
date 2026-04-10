@@ -97,11 +97,7 @@ def get_produto_analytics(id_produto: str, db: Session = Depends(get_db)):
     )
 
     # Últimas 5 avaliações
-    last_reviews = db.query(
-        AvaliacaoPedidoModel.avaliacao,
-        AvaliacaoPedidoModel.comentario,
-        AvaliacaoPedidoModel.data_comentario
-    ).join(
+    last_reviews = db.query(AvaliacaoPedidoModel).join(
         ItemPedidoModel, ItemPedidoModel.id_pedido == AvaliacaoPedidoModel.id_pedido
     ).filter(
         ItemPedidoModel.id_produto == id_produto
