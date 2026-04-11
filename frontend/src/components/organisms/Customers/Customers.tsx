@@ -25,7 +25,6 @@ export const Customers = ({
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <h3 style={{ fontSize: '24px', fontWeight: '900', fontStyle: 'italic', letterSpacing: '-0.05em', textTransform: 'uppercase', margin: 0 }}>Consumidores</h3>
             <div style={{ backgroundColor: 'rgba(15, 23, 42, 0.4)', border: '1px solid rgba(255, 255, 255, 0.05)', borderRadius: '40px', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}>
                 <table style={{ width: '100%', textAlign: 'left', fontSize: '14px', borderCollapse: 'separate', borderSpacing: 0 }}>
                     <thead style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)', fontSize: '10px', fontWeight: '900', textTransform: 'uppercase', color: '#64748b', letterSpacing: '0.1em' }}>

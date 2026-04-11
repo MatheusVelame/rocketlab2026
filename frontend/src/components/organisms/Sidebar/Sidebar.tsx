@@ -111,14 +111,14 @@ export const Sidebar = ({
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', maxHeight: '400px', overflowY: 'auto' }} className="scrollbar-hide">
                             <CategoryItem
                                 label="Todos os Itens"
-                                active={selectedCategory === ''}
+                                isActive={selectedCategory === ''}
                                 onClick={() => onCategorySelect('')}
                             />
                             {categories.map(cat => (
                                 <CategoryItem
                                     key={cat}
                                     label={cat.replace(/_/g, ' ')}
-                                    active={selectedCategory === cat}
+                                    isActive={selectedCategory === cat}
                                     onClick={() => onCategorySelect(cat)}
                                 />
                             ))}

@@ -28,11 +28,17 @@ def list_clientes(
     skip: int = 0, 
     limit: int = 20, 
     q: Optional[str] = None,
+    estado: Optional[str] = None,
+    cidade: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
     query = db.query(ConsumidorModel)
     if q:
         query = query.filter(ConsumidorModel.nome_consumidor.contains(q))
+    if estado:
+        query = query.filter(ConsumidorModel.estado.ilike(f"%{estado}%"))
+    if cidade:
+        query = query.filter(ConsumidorModel.cidade.ilike(f"%{cidade}%"))
     
     total = query.count()
     items = query.offset(skip).limit(limit).all()

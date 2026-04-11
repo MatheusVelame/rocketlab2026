@@ -28,11 +28,17 @@ def list_vendedores(
     skip: int = 0, 
     limit: int = 20, 
     q: Optional[str] = None,
+    estado: Optional[str] = None,
+    cidade: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
     query = db.query(VendedorModel)
     if q:
         query = query.filter(VendedorModel.nome_vendedor.contains(q))
+    if estado:
+        query = query.filter(VendedorModel.estado.ilike(f"%{estado}%"))
+    if cidade:
+        query = query.filter(VendedorModel.cidade.ilike(f"%{cidade}%"))
     
     total = query.count()
     items = query.offset(skip).limit(limit).all()

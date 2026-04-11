@@ -4,13 +4,26 @@ import { Customers as CustomersOrganism } from '../../components/organisms/Custo
 import { CustomerModal } from '../../components/organisms/CustomerModal';
 import { useRocketStats } from '../../hooks/useRocketStats';
 import type { Consumidor } from '../../types';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export const Customers = () => {
+    const [search, setSearch] = useState('');
+    const [showFilters, setShowFilters] = useState(false);
+    const [filters, setFilters] = useState({
+        estado: '',
+        cidade: ''
+    });
+
     const {
         clientes, page, setPage, totalPages
-    } = useRocketStats('consumidores');
+    } = useRocketStats('consumidores', search, filters);
 
     const [selectedCustomer, setSelectedCustomer] = useState<Consumidor | null>(null);
+
+    const handleFilterChange = (key: string, value: string) => {
+        setFilters(prev => ({ ...prev, [key]: value }));
+        setPage(0);
+    };
 
     const renderPagination = (current: number, total: number, onChange: (p: number) => void): ReactNode => {
         if (total <= 1) return null;
@@ -59,14 +72,74 @@ export const Customers = () => {
         );
     };
 
+    const filterIcon = (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" /></svg>
+    );
+
     return (
         <DefaultTemplate
-            search=""
-            onSearchChange={() => { }}
+            search={search}
+            onSearchChange={(val) => { setSearch(val); setPage(0); }}
             categories={[]}
             selectedCategory=""
             onCategorySelect={() => { }}
         >
+            <div style={{ marginBottom: '24px', position: 'relative', display: 'flex', gap: '16px', alignItems: 'center' }}>
+                <button
+                    onClick={() => setShowFilters(!showFilters)}
+                    style={{
+                        padding: '12px 24px', borderRadius: '16px', backgroundColor: showFilters ? '#4f46e5' : 'rgba(255,255,255,0.05)',
+                        color: 'white', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px',
+                        fontSize: '12px', fontWeight: '900', transition: 'all 0.3s'
+                    }}
+                >
+                    {filterIcon}
+                    FILTROS REGIONAIS
+                </button>
+
+                <AnimatePresence>
+                    {showFilters && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+                            style={{
+                                position: 'absolute', top: '70px', left: 0, zIndex: 10, width: '100%', maxWidth: '500px',
+                                backgroundColor: '#0f172a', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)',
+                                padding: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.5)', display: 'flex', gap: '16px'
+                            }}
+                        >
+                            <div style={{ flex: 1 }}>
+                                <label style={{ display: 'block', fontSize: '10px', color: '#64748b', fontWeight: '900', marginBottom: '8px', textTransform: 'uppercase' }}>Estado (UF)</label>
+                                <input
+                                    type="text"
+                                    placeholder="Ex: SP"
+                                    value={filters.estado}
+                                    onChange={(e) => handleFilterChange('estado', e.target.value)}
+                                    style={{
+                                        width: '100%', backgroundColor: '#1e293b', color: 'white',
+                                        border: '1px solid rgba(255,255,255,0.1)', padding: '12px',
+                                        borderRadius: '12px', fontSize: '12px', outline: 'none'
+                                    }}
+                                />
+                            </div>
+                            <div style={{ flex: 2 }}>
+                                <label style={{ display: 'block', fontSize: '10px', color: '#64748b', fontWeight: '900', marginBottom: '8px', textTransform: 'uppercase' }}>Cidade</label>
+                                <input
+                                    type="text"
+                                    placeholder="Buscar cidade..."
+                                    value={filters.cidade}
+                                    onChange={(e) => handleFilterChange('cidade', e.target.value)}
+                                    style={{
+                                        width: '100%', backgroundColor: '#1e293b', color: 'white',
+                                        border: '1px solid rgba(255,255,255,0.1)', padding: '12px',
+                                        borderRadius: '12px', fontSize: '12px', outline: 'none'
+                                    }}
+                                />
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+
             <CustomersOrganism
                 clientes={clientes}
                 clientPage={page}

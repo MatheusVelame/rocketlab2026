@@ -113,13 +113,18 @@ export const OrderItems = () => {
                                 <select
                                     value={filters.status}
                                     onChange={(e) => handleFilterChange('status', e.target.value)}
-                                    style={{ width: '100%', backgroundColor: 'rgba(255,255,255,0.05)', color: 'white', border: 'none', padding: '12px', borderRadius: '12px', fontSize: '12px' }}
+                                    style={{
+                                        width: '100%', backgroundColor: '#1e293b', color: 'white',
+                                        border: '1px solid rgba(255,255,255,0.1)', padding: '12px',
+                                        borderRadius: '12px', fontSize: '12px', outline: 'none',
+                                        cursor: 'pointer'
+                                    }}
                                 >
-                                    <option value="">Todos</option>
-                                    <option value="delivered">Entregue</option>
-                                    <option value="shipped">Enviado</option>
-                                    <option value="processing">Processando</option>
-                                    <option value="canceled">Cancelado</option>
+                                    <option value="" style={{ backgroundColor: '#1e293b', color: 'white' }}>Todos</option>
+                                    <option value="delivered" style={{ backgroundColor: '#1e293b', color: 'white' }}>Entregue</option>
+                                    <option value="shipped" style={{ backgroundColor: '#1e293b', color: 'white' }}>Enviado</option>
+                                    <option value="processing" style={{ backgroundColor: '#1e293b', color: 'white' }}>Processando</option>
+                                    <option value="canceled" style={{ backgroundColor: '#1e293b', color: 'white' }}>Cancelado</option>
                                 </select>
                             </div>
                             <div style={{ flex: 1 }}>
@@ -128,7 +133,11 @@ export const OrderItems = () => {
                                     type="date"
                                     value={filters.dataInicio}
                                     onChange={(e) => handleFilterChange('dataInicio', e.target.value)}
-                                    style={{ width: '100%', backgroundColor: 'rgba(255,255,255,0.05)', color: 'white', border: 'none', padding: '12px', borderRadius: '12px', fontSize: '12px' }}
+                                    style={{
+                                        width: '100%', backgroundColor: '#1e293b', color: 'white',
+                                        border: '1px solid rgba(255,255,255,0.1)', padding: '12px',
+                                        borderRadius: '12px', fontSize: '12px', outline: 'none'
+                                    }}
                                 />
                             </div>
                             <div style={{ flex: 1 }}>
@@ -137,7 +146,11 @@ export const OrderItems = () => {
                                     type="date"
                                     value={filters.dataFim}
                                     onChange={(e) => handleFilterChange('dataFim', e.target.value)}
-                                    style={{ width: '100%', backgroundColor: 'rgba(255,255,255,0.05)', color: 'white', border: 'none', padding: '12px', borderRadius: '12px', fontSize: '12px' }}
+                                    style={{
+                                        width: '100%', backgroundColor: '#1e293b', color: 'white',
+                                        border: '1px solid rgba(255,255,255,0.1)', padding: '12px',
+                                        borderRadius: '12px', fontSize: '12px', outline: 'none'
+                                    }}
                                 />
                             </div>
                         </motion.div>

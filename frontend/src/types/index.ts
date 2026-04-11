@@ -114,4 +114,8 @@ export interface MonthlyRevenue {
 export interface DashboardStats {
   revenue_history: MonthlyRevenue[];
   status_distribution: Record<string, number>;
+  total_revenue: number;
+  total_orders: number;
+  average_ticket: number;
+  total_customers: number;
 }

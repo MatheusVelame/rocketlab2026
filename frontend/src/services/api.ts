@@ -39,16 +39,20 @@ export const productApi = {
         const response = await api.get<GlobalStats>('/produtos/stats/global');
         return response.data;
     },
-    listClientes: async (q?: string, skip: number = 0) => {
-        const response = await api.get<PaginatedResponse<Consumidor>>('/clientes', { params: { q, skip } });
+    listClientes: async (q?: string, skip: number = 0, estado?: string, cidade?: string) => {
+        const response = await api.get<PaginatedResponse<Consumidor>>('/clientes', {
+            params: { q, skip, estado, cidade }
+        });
         return response.data;
     },
     getCliente: async (id: string) => {
         const response = await api.get<Consumidor>(`/clientes/${id}`);
         return response.data;
     },
-    listVendedores: async (q?: string, skip: number = 0) => {
-        const response = await api.get<PaginatedResponse<Vendedor>>('/vendedores', { params: { q, skip } });
+    listVendedores: async (q?: string, skip: number = 0, estado?: string, cidade?: string) => {
+        const response = await api.get<PaginatedResponse<Vendedor>>('/vendedores', {
+            params: { q, skip, estado, cidade }
+        });
         return response.data;
     },
     getVendedor: async (id: string) => {
