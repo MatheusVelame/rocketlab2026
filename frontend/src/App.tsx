@@ -4,10 +4,10 @@ import type { Produto, ProductAnalytics, GlobalStats, Consumidor, DashboardStats
 import {
   Search, ShoppingBag, Star, Edit, X, Save, Plus,
   Trash2, TrendingUp, BarChart3, Users, Package, Zap, ChevronRight,
-  ChevronLeft, LayoutDashboard, MapPin
+  ChevronLeft, LayoutDashboard, MapPin, Info, MessageSquare
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BarChart, Bar, Tooltip, ResponsiveContainer, Cell, XAxis, YAxis, CartesianGrid, LineChart, Line } from 'recharts';
+import { BarChart, Bar, Tooltip, ResponsiveContainer, Cell, XAxis, YAxis, CartesianGrid, LineChart, Line, RadarChart, PolarGrid, PolarAngleAxis, Radar } from 'recharts';
 
 type View = 'estoque' | 'clientes' | 'dashboard';
 
@@ -146,6 +146,23 @@ function App() {
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const getSmartInsight = (data: ProductAnalytics) => {
+    const { performance } = data;
+    if (performance.total_vendas > 50 && performance.avaliacao_media >= 4.5) {
+      return "🏆 Best-Seller Detectado! Este produto possui alta conversão e excelente satisfação. Recomendamos aumentar o investimento em marketing.";
+    }
+    if (performance.avaliacao_media < 3.5 && performance.total_vendas > 5) {
+      return "⚠️ Alerta de Qualidade! Alta taxa de feedback negativo. Verifique as dimensões e o material do produto imediatamente.";
+    }
+    if (performance.total_vendas === 0) {
+      return "❄️ Produto 'Frio'. Sem vendas recentes. Considere uma promoção agressiva ou mudança na categoria principal.";
+    }
+    if (performance.preco_medio > 200) {
+      return "💎 Perfil Premium. Produto de alto ticket. Focar em audiências de luxo e atendimento personalizado.";
+    }
+    return "📈 Desempenho Estável. Fluxo de vendas constante. Monitorar estoque para evitar rupturas.";
   };
 
   return (
@@ -411,8 +428,8 @@ function App() {
         {(selectedProduct || isCreating) && (
           <div className="fixed inset-0 z-[1000] flex items-center justify-center p-6">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-slate-950/90 backdrop-blur-xl" onClick={() => { setSelectedProduct(null); setAnalytics(null); setIsEditing(false); setIsCreating(false); }} />
-            <motion.div initial={{ scale: 0.9, y: 50, opacity: 0 }} animate={{ scale: 1, y: 0, opacity: 1 }} exit={{ scale: 0.9, y: 50, opacity: 0 }} className="relative w-full max-w-5xl max-h-[90vh] bg-slate-900 rounded-[3.5rem] border border-white/10 overflow-hidden shadow-2xl">
-              <div className="p-12 overflow-y-auto custom-scrollbar h-full scrollbar-hide">
+            <motion.div initial={{ scale: 0.9, y: 50, opacity: 0 }} animate={{ scale: 1, y: 0, opacity: 1 }} exit={{ scale: 0.9, y: 50, opacity: 0 }} className="relative w-full max-w-6xl max-h-[90vh] bg-slate-900 rounded-[3.5rem] border border-white/10 overflow-hidden shadow-2xl">
+              <div className="p-10 lg:p-14 overflow-y-auto custom-scrollbar h-full scrollbar-hide">
                 {(isEditing || isCreating) ? (
                   <div className="space-y-10">
                     <div className="flex justify-between items-center">
@@ -438,20 +455,29 @@ function App() {
                     </div>
                   </div>
                 ) : selectedProduct && (
-                  <div className="flex flex-col lg:flex-row gap-12">
-                    <div className="w-full lg:w-96 shrink-0 space-y-8">
+                  <div className="flex flex-col lg:grid lg:grid-cols-12 gap-12">
+                    {/* Left Column (Image & Insights) */}
+                    <div className="lg:col-span-4 space-y-8">
                       <div className="aspect-square rounded-[3rem] overflow-hidden bg-slate-950 border border-white/10 shadow-2xl">
                         <img src={selectedProduct.url_imagem} className="w-full h-full object-cover" />
                       </div>
+
                       {analytics && (
-                        <div className="p-8 bg-indigo-600/10 rounded-[2.5rem] border border-indigo-500/20">
-                          <div className="flex items-center gap-2 text-indigo-400 mb-3"><Zap size={20} fill="currentColor" /><span className="text-xs font-black uppercase tracking-widest">Rocket Insight</span></div>
-                          <p className="text-sm font-medium leading-relaxed italic text-indigo-100">“{analytics.performance.total_vendas > 10 ? 'Produto premium com alta taxa de recompra. Ideal para campanhas de fidelidade.' : 'Volume de vendas estável. Recomendamos otimização de SEO para aumentar alcance.'}”</p>
+                        <div className="p-8 bg-indigo-600/10 rounded-[2.5rem] border border-indigo-500/20 relative overflow-hidden group/insight">
+                          <div className="absolute -right-4 -top-4 w-20 h-20 bg-indigo-500/10 rounded-full blur-2xl group-hover/insight:bg-indigo-500/20 transition-all" />
+                          <div className="flex items-center gap-2 text-indigo-400 mb-4">
+                            <Zap size={20} fill="currentColor" className="animate-pulse" />
+                            <span className="text-xs font-black uppercase tracking-[0.2em]">Rocket Smart Analysis</span>
+                          </div>
+                          <p className="text-sm font-semibold leading-relaxed text-indigo-100/90 whitespace-pre-line">
+                            {getSmartInsight(analytics)}
+                          </p>
                         </div>
                       )}
                     </div>
 
-                    <div className="flex-1 space-y-10">
+                    {/* Right Column (Details & Performance & Comments) */}
+                    <div className="lg:col-span-8 space-y-10">
                       <div className="flex justify-between items-start">
                         <div>
                           <h2 className="text-4xl font-black text-white leading-tight mb-2">{selectedProduct.nome_produto}</h2>
@@ -467,36 +493,70 @@ function App() {
                         </div>
                       </div>
 
-                      {analytics && (
-                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                          {[
-                            { l: 'Pedidos', v: analytics.performance.total_vendas, i: ShoppingBag, c: 'text-indigo-400' },
-                            { l: 'Receita', v: `R$ ${Math.round(analytics.performance.receita_total).toLocaleString()}`, i: TrendingUp, c: 'text-emerald-400' },
-                            { l: 'Ranking', v: analytics.performance.avaliacao_media.toFixed(1), i: Star, c: 'text-amber-400' },
-                            { l: 'Logística', v: `${selectedProduct.peso_produto_gramas}g`, i: Package, c: 'text-purple-400' },
-                          ].map((s, i) => (
-                            <div key={i} className="bg-slate-950/50 p-6 rounded-3xl border border-white/5 text-center">
-                              <s.i size={20} className={`mx-auto mb-3 ${s.c}`} />
-                              <p className="text-[10px] font-black text-slate-600 uppercase mb-1">{s.l}</p>
-                              <h4 className="text-lg font-black text-white">{s.v}</h4>
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                        {[
+                          { l: 'Vendas', v: analytics?.performance.total_vendas || 0, i: ShoppingBag, c: 'text-indigo-400' },
+                          { l: 'Faturamento', v: `R$ ${Math.round(analytics?.performance.receita_total || 0).toLocaleString()}`, i: TrendingUp, c: 'text-emerald-400' },
+                          { l: 'Satisfação', v: analytics?.performance.avaliacao_media.toFixed(1) || '0.0', i: Star, c: 'text-amber-400' },
+                          { l: 'Peso', v: `${selectedProduct.peso_produto_gramas}g`, i: Package, c: 'text-purple-400' },
+                        ].map((s, i) => (
+                          <div key={i} className="bg-slate-950/60 p-5 rounded-3xl border border-white/5 text-center transition-all hover:bg-slate-950">
+                            <s.i size={18} className={`mx-auto mb-2 ${s.c}`} />
+                            <p className="text-[9px] font-black text-slate-600 uppercase mb-1">{s.l}</p>
+                            <h4 className="text-base font-black text-white">{s.v}</h4>
+                          </div>
+                        ))}
+                      </div>
 
-                      <div className="h-48 bg-slate-950/20 rounded-[2.5rem] border border-white/5 p-8">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <BarChart data={analytics?.performance ? [
-                            { n: 'Conversão', v: analytics.performance.total_vendas * 2 },
-                            { n: 'VGM', v: analytics.performance.receita_total / 100 },
-                            { n: 'Retenção', v: analytics.performance.avaliacao_media * 20 }
-                          ] : []}>
-                            <Tooltip contentStyle={{ background: '#020617', border: 'none', borderRadius: '16px' }} />
-                            <Bar dataKey="v" radius={[8, 8, 0, 0]} barSize={50}>
-                              {[0, 1, 2].map((_, i) => <Cell key={i} fill={['#6366f1', '#a855f7', '#fbbf24'][i]} />)}
-                            </Bar>
-                          </BarChart>
-                        </ResponsiveContainer>
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        {/* DNA CHART */}
+                        <div className="bg-slate-950/30 rounded-[2.5rem] border border-white/5 p-6 relative">
+                          <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">
+                            <BarChart3 size={12} /> Performance Radar
+                          </div>
+                          <div className="h-48">
+                            <ResponsiveContainer width="100%" height="100%">
+                              <RadarChart cx="50%" cy="50%" outerRadius="80%" data={analytics?.performance ? [
+                                { subject: 'Vendas', A: Math.min(analytics.performance.total_vendas * 5, 100) },
+                                { subject: 'Receita', A: Math.min(analytics.performance.receita_total / 20, 100) },
+                                { subject: 'Nota', A: analytics.performance.avaliacao_media * 20 },
+                                { subject: 'Volume', A: Math.min(analytics.performance.total_avaliacoes * 2, 100) },
+                                { subject: 'Ticket', A: Math.min(analytics.performance.preco_medio / 5, 100) },
+                              ] : []}>
+                                <PolarGrid stroke="#ffffff05" />
+                                <PolarAngleAxis dataKey="subject" tick={{ fill: '#475569', fontSize: 8, fontWeight: '900' }} />
+                                <Radar name="P" dataKey="A" stroke="#6366f1" fill="#6366f1" fillOpacity={0.6} />
+                              </RadarChart>
+                            </ResponsiveContainer>
+                          </div>
+                        </div>
+
+                        {/* COMMENTS SECTION */}
+                        <div className="bg-slate-950/30 rounded-[2.5rem] border border-white/5 p-6 space-y-4">
+                          <div className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">
+                            <MessageSquare size={12} /> Avaliações de Clientes
+                          </div>
+                          <div className="space-y-3 max-h-48 overflow-y-auto custom-scrollbar pr-2">
+                            {analytics?.ultimas_avaliacoes && analytics.ultimas_avaliacoes.length > 0 ? (
+                              analytics.ultimas_avaliacoes.map((rev, i) => (
+                                <div key={i} className="p-4 bg-white/5 rounded-2xl border border-white/5 space-y-2">
+                                  <div className="flex justify-between items-center text-[10px] font-bold">
+                                    <div className="flex text-amber-500 gap-0.5">
+                                      {Array.from({ length: rev.avaliacao }).map((_, j) => <Star key={j} size={10} fill="currentColor" />)}
+                                    </div>
+                                    <span className="text-slate-600">{new Date(rev.data_comentario).toLocaleDateString()}</span>
+                                  </div>
+                                  <p className="text-xs text-slate-300 italic leading-relaxed">"{rev.comentario || 'Sem comentário detalhado.'}"</p>
+                                </div>
+                              ))
+                            ) : (
+                              <div className="text-center py-10">
+                                <MessageSquare size={32} className="mx-auto text-slate-800 mb-3" />
+                                <p className="text-xs font-bold text-slate-600">Ainda não há avaliações para este item.</p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>

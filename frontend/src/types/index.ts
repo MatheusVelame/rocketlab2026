@@ -23,11 +23,17 @@ export interface ReviewSummary {
   data_comentario: string | null;
 }
 
+export interface Review {
+  avaliacao: number;
+  comentario: string;
+  data_comentario: string;
+}
+
 export interface ProductAnalytics {
   id_produto: string;
   nome_produto: string;
   performance: ProductPerformance;
-  ultimas_avaliacoes: ReviewSummary[];
+  ultimas_avaliacoes: Review[];
 }
 
 export interface GlobalStats {
