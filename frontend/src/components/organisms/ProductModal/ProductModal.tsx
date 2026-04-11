@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion';
+import { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer } from 'recharts';
 import type { Produto, ProductAnalytics } from '../../../types';
 
@@ -14,6 +15,7 @@ interface ProductModalProps {
     onSave: () => void;
     onFormChange: (form: Partial<Produto>) => void;
     getSmartInsight: (data: ProductAnalytics) => { text: string; type: string };
+    availableCategories: string[];
 }
 
 export const ProductModal = ({
@@ -27,9 +29,26 @@ export const ProductModal = ({
     onDelete,
     onSave,
     onFormChange,
-    getSmartInsight
+    getSmartInsight,
+    availableCategories
 }: ProductModalProps) => {
+    const [catQuery, setCatQuery] = useState('');
+    const [showSuggestions, setShowSuggestions] = useState(false);
+    const suggestionsRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (editForm.categoria_produto) {
+            setCatQuery(editForm.categoria_produto.replace(/_/g, ' '));
+        } else {
+            setCatQuery('');
+        }
+    }, [isEditing, isCreating, editForm.categoria_produto]);
+
     if (!product && !isCreating) return null;
+
+    const filteredCats = availableCategories.filter(c =>
+        c.toLowerCase().includes(catQuery.toLowerCase())
+    ).slice(0, 5);
 
     const icons = {
         edit: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" /><path d="m15 5 4 4" /></svg>,
@@ -42,6 +61,18 @@ export const ProductModal = ({
         sales: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" /><path d="M3 6h18" /><path d="M16 10a4 4 0 0 1-8 0" /></svg>,
         ruler: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m21.43 12.48-6-6a2 2 0 0 0-2.83 0l-8.66 8.64a2 2 0 0 0 0 2.83l6 6a2 2 0 0 0 2.83 0l8.66-8.64a2 2 0 0 0 0-2.83ZM7 10.5 8.5 12m1-3 1.5 1.5m1-3 1.5 1.5m1-3 1.5 1.5" /></svg>
     };
+
+    const renderField = (label: string, field: keyof Produto, type: string = 'text') => (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <label style={{ fontSize: '10px', fontWeight: '900', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.1em', paddingLeft: '8px' }}>{label}</label>
+            <input
+                type={type}
+                value={editForm[field] || ''}
+                onChange={e => onFormChange({ ...editForm, [field]: type === 'number' ? Number(e.target.value) : e.target.value })}
+                style={{ width: '100%', backgroundColor: 'rgba(2, 6, 23, 0.6)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', padding: '16px', fontSize: '14px', color: 'white', outline: 'none', transition: 'all 0.3s' }}
+            />
+        </div>
+    );
 
     return (
         <div style={{
@@ -56,23 +87,71 @@ export const ProductModal = ({
                 className="scrollbar-hide"
                 onClick={e => e.stopPropagation()}
             >
+                <button onClick={onClose} style={{ position: 'absolute', top: '24px', right: '24px', width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '9999px', border: 'none', cursor: 'pointer', color: '#64748b' }}> {icons.close} </button>
+
                 {(isEditing || isCreating) ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
-                        <h2 style={{ fontSize: '30px', fontWeight: '900', fontStyle: 'italic', letterSpacing: '-0.05em' }}>{isCreating ? 'Novo Produto' : editForm.nome_produto}</h2>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '32px', backgroundColor: 'rgba(0,0,0,0.4)', padding: '40px', borderRadius: '48px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                            <div style={{ gridColumn: 'span 2', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                <label style={{ fontSize: '10px', fontWeight: '900', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.1em', paddingLeft: '8px' }}>Nome Comercial</label>
-                                <input value={editForm.nome_produto} onChange={e => onFormChange({ ...editForm, nome_produto: e.target.value })} style={{ width: '100%', backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', padding: '16px', fontSize: '14px', color: 'white', outline: 'none' }} />
+                        <h2 style={{ fontSize: '30px', fontWeight: '900', fontStyle: 'italic', letterSpacing: '-0.05em' }}>{isCreating ? 'Novo Produto' : 'Editando Produto'}</h2>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '32px', backgroundColor: 'rgba(0,0,0,0.4)', padding: '48px', borderRadius: '48px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                            <div style={{ gridColumn: 'span 2' }}>
+                                {renderField('Nome Comercial do Produto', 'nome_produto')}
                             </div>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                <label style={{ fontSize: '10px', fontWeight: '900', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.1em', paddingLeft: '8px' }}>Categoria</label>
-                                <input value={editForm.categoria_produto} onChange={e => onFormChange({ ...editForm, categoria_produto: e.target.value })} style={{ width: '100%', backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', padding: '16px', fontSize: '14px', color: 'white', outline: 'none' }} />
+
+                            <div style={{ position: 'relative' }}>
+                                <label style={{ fontSize: '10px', fontWeight: '900', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.1em', paddingLeft: '8px', display: 'block', marginBottom: '8px' }}>Categoria</label>
+                                <input
+                                    value={catQuery}
+                                    onFocus={() => setShowSuggestions(true)}
+                                    onChange={e => {
+                                        setCatQuery(e.target.value);
+                                        setShowSuggestions(true);
+                                        onFormChange({ ...editForm, categoria_produto: e.target.value.toLowerCase().replace(/ /g, '_') });
+                                    }}
+                                    placeholder="Digite para buscar categoria..."
+                                    style={{ width: '100%', backgroundColor: 'rgba(2, 6, 23, 0.6)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', padding: '16px', fontSize: '14px', color: 'white', outline: 'none' }}
+                                />
+                                <AnimatePresence>
+                                    {showSuggestions && filteredCats.length > 0 && (
+                                        <motion.div
+                                            ref={suggestionsRef}
+                                            initial={{ opacity: 0, y: -10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, y: -10 }}
+                                            style={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 10, backgroundColor: '#1e293b', borderRadius: '16px', marginTop: '8px', border: '1px solid rgba(255,255,255,0.1)', overflow: 'hidden', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.5)' }}
+                                        >
+                                            {filteredCats.map(cat => (
+                                                <div
+                                                    key={cat}
+                                                    onClick={() => {
+                                                        onFormChange({ ...editForm, categoria_produto: cat });
+                                                        setCatQuery(cat.replace(/_/g, ' '));
+                                                        setShowSuggestions(false);
+                                                    }}
+                                                    style={{ padding: '12px 16px', cursor: 'pointer', fontSize: '12px', borderBottom: '1px solid rgba(255,255,255,0.05)', color: '#cbd5e1', textTransform: 'capitalize' }}
+                                                    className="hover-bg-indigo"
+                                                >
+                                                    {cat.replace(/_/g, ' ')}
+                                                </div>
+                                            ))}
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
                             </div>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                <label style={{ fontSize: '10px', fontWeight: '900', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.1em', paddingLeft: '8px' }}>Peso (g)</label>
-                                <input type="number" value={editForm.peso_produto_gramas} onChange={e => onFormChange({ ...editForm, peso_produto_gramas: Number(e.target.value) })} style={{ width: '100%', backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', padding: '16px', fontSize: '14px', color: 'white', outline: 'none' }} />
+
+                            {renderField('Peso (gramas)', 'peso_produto_gramas', 'number')}
+
+                            <div style={{ gridColumn: 'span 2', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '32px' }}>
+                                {renderField('Comprimento (cm)', 'comprimento_centimetros', 'number')}
+                                {renderField('Altura (cm)', 'altura_centimetros', 'number')}
+                                {renderField('Largura (cm)', 'largura_centimetros', 'number')}
                             </div>
-                            <button onClick={onSave} style={{ gridColumn: 'span 2', backgroundColor: '#4f46e5', color: 'white', fontWeight: '900', padding: '20px', borderRadius: '16px', marginTop: '16px', fontSize: '12px', border: 'none', cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Sincronizar Produto</button>
+
+                            <button
+                                onClick={onSave}
+                                style={{ gridColumn: 'span 2', backgroundColor: '#4f46e5', color: 'white', fontWeight: '900', padding: '24px', borderRadius: '24px', marginTop: '16px', fontSize: '14px', border: 'none', cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.1em', boxShadow: '0 10px 15px -3px rgba(79, 70, 229, 0.3)' }}
+                            >
+                                Sincronizar Produto na Base
+                            </button>
                         </div>
                     </div>
                 ) : product && (
@@ -107,7 +186,6 @@ export const ProductModal = ({
                                 <div style={{ display: 'flex', gap: '8px' }}>
                                     <button onClick={onEdit} style={{ width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '16px', border: 'none', cursor: 'pointer', color: '#94a3b8' }}> {icons.edit} </button>
                                     <button onClick={() => onDelete(product.id_produto)} style={{ width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(244,63,94,0.1)', borderRadius: '16px', border: '1px solid rgba(244,63,94,0.2)', cursor: 'pointer', color: '#f43f5e' }}> {icons.delete} </button>
-                                    <button onClick={onClose} style={{ width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '9999px', border: 'none', cursor: 'pointer', color: '#64748b' }}> {icons.close} </button>
                                 </div>
                             </div>
                             <div style={{ gridColumn: 'span 8', display: 'flex', flexDirection: 'column', gap: '32px' }}>

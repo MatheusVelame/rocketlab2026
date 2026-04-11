@@ -40,7 +40,7 @@ export const Inventory = () => {
             }
             loadProducts();
             loadGlobalStats();
-        } catch (error) { alert('Erro ao salvar.'); }
+        } catch (error) { alert('Erro ao salvar: id já existe ou dados inválidos.'); }
     };
 
     const handleDelete = async (id: string) => {
@@ -103,7 +103,7 @@ export const Inventory = () => {
         <DefaultTemplate
             search={search}
             onSearchChange={(val) => { setSearch(val); setPage(0); }}
-            onAddNew={() => { setIsCreating(true); setEditForm({ id_produto: Math.random().toString(36).substr(2, 9) }); }}
+            onAddNew={() => { setIsCreating(true); setEditForm({ id_produto: Math.random().toString(36).substr(2, 9), peso_produto_gramas: 0, comprimento_centimetros: 0, altura_centimetros: 0, largura_centimetros: 0 }); }}
             categories={categories}
             selectedCategory={selectedCategory}
             onCategorySelect={setSelectedCategory}
@@ -131,6 +131,7 @@ export const Inventory = () => {
                 onSave={handleSave}
                 onFormChange={setEditForm}
                 getSmartInsight={getSmartInsight}
+                availableCategories={categories}
             />
         </DefaultTemplate>
     );

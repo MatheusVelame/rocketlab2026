@@ -41,8 +41,16 @@ export const DefaultTemplate = ({
                 onCategorySelect={onCategorySelect}
             />
 
-            <main style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
-                <header style={{ height: '80px', borderBottom: '1px solid rgba(255, 255, 255, 0.05)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 40px', backgroundColor: 'rgba(2, 6, 23, 0.4)', backdropFilter: 'blur(20px)', flexShrink: 0 }}>
+            <main style={{
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                position: 'relative',
+                overflow: 'hidden',
+                transform: 'translateZ(0)', // Força aceleração de Hardware
+                willChange: 'transform'
+            }}>
+                <header style={{ height: '80px', borderBottom: '1px solid rgba(255, 255, 255, 0.05)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 40px', backgroundColor: 'rgba(2, 6, 23, 0.4)', backdropFilter: 'blur(20px)', flexShrink: 0, zIndex: 10 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                         <h2 style={{ fontSize: '20px', fontWeight: '900', color: 'white', fontStyle: 'italic', letterSpacing: '-0.05em', textTransform: 'uppercase', margin: 0 }}>{currentView}</h2>
                         <div style={{ height: '24px', width: '1px', backgroundColor: 'rgba(255,255,255,0.1)' }} />
@@ -90,7 +98,13 @@ export const DefaultTemplate = ({
                     )}
                 </header>
 
-                <section style={{ flex: 1, overflowY: 'auto', padding: '40px' }} className="scrollbar-hide">
+                <section style={{
+                    flex: 1,
+                    overflowY: 'auto',
+                    padding: '40px',
+                    WebkitOverflowScrolling: 'touch', // Scroll suave no iOS
+                    scrollBehavior: 'smooth'
+                }} className="scrollbar-hide">
                     {children}
                 </section>
             </main>

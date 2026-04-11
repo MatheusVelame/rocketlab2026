@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { motion } from 'framer-motion';
 import type { Produto } from '../../../types';
 
@@ -6,7 +7,7 @@ interface ProductCardProps {
     onClick: () => void;
 }
 
-export const ProductCard = ({ produto, onClick }: ProductCardProps) => {
+export const ProductCard = memo(({ produto, onClick }: ProductCardProps) => {
     return (
         <motion.div
             whileHover={{ y: -5 }}
@@ -17,13 +18,16 @@ export const ProductCard = ({ produto, onClick }: ProductCardProps) => {
                 border: '1px solid rgba(255, 255, 255, 0.05)',
                 padding: '16px',
                 cursor: 'pointer',
-                transition: 'all 0.3s'
+                transition: 'all 0.3s',
+                willChange: 'transform', // Otimização para GPU
+                contentVisibility: 'auto' // Otimização de renderização do Chrome
             }}
         >
-            <div style={{ aspectRatio: '1/1', borderRadius: '24px', overflow: 'hidden', marginBottom: '16px', backgroundColor: '#020617', border: '1px solid rgba(255,255,255,0.05)' }}>
+            <div style={{ aspectRatio: '1/1', borderRadius: '24px', overflow: 'hidden', marginBottom: '16px', backgroundColor: '#020617', border: '1px solid rgba(255,155,255,0.05)' }}>
                 <img
                     src={produto.url_imagem}
                     alt={produto.nome_produto}
+                    loading="lazy" // Carregamento sob demanda
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
             </div>
@@ -42,6 +46,6 @@ export const ProductCard = ({ produto, onClick }: ProductCardProps) => {
             </div>
         </motion.div>
     );
-};
+});
 
 export default ProductCard;

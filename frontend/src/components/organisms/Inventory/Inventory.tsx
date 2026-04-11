@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import { type ReactNode, memo } from 'react';
 import { StatsCard } from '../../atoms/StatsCard/StatsCard';
 import { ProductCard } from '../ProductCard/ProductCard';
 import type { Produto, GlobalStats } from '../../../types';
@@ -14,7 +14,7 @@ interface InventoryProps {
     renderPagination: (current: number, total: number, onChange: (p: number) => void) => ReactNode;
 }
 
-export const Inventory = ({
+export const Inventory = memo(({
     produtos,
     globalStats,
     page,
@@ -50,7 +50,12 @@ export const Inventory = ({
                     </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '24px' }}>
+                <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(5, 1fr)',
+                    gap: '24px',
+                    contain: 'layout' // Otimização de renderização
+                }}>
                     {produtos.map(p => (
                         <ProductCard key={p.id_produto} produto={p} onClick={() => onProductClick(p)} />
                     ))}
@@ -62,6 +67,6 @@ export const Inventory = ({
             </div>
         </div>
     );
-};
+});
 
 export default Inventory;

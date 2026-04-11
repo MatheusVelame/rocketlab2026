@@ -84,7 +84,7 @@ def update_produto(id_produto: str, produto_update: ProdutoUpdate, db: Session =
     if not db_produto:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
     
-    update_data = produto_update.model_dump(exclude_unset=True)
+    update_data = produto_update.model_dump(exclude_unset=True, exclude={"url_imagem"})
     for key, value in update_data.items():
         setattr(db_produto, key, value)
     
@@ -98,7 +98,7 @@ def create_produto(produto: Produto, db: Session = Depends(get_db)):
     if db_exists:
         raise HTTPException(status_code=400, detail="ID de produto já cadastrado")
     
-    new_product = ProdutoModel(**produto.model_dump())
+    new_product = ProdutoModel(**produto.model_dump(exclude={"url_imagem"}))
     db.add(new_product)
     db.commit()
     db.refresh(new_product)
