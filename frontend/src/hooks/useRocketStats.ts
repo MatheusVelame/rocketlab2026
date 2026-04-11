@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { productApi } from '../services/api';
 import type { DashboardStats, Consumidor, Vendedor, PedidoItem } from '../types';
 
-export const useRocketStats = (currentView: string, search: string = '') => {
+export const useRocketStats = (currentView: string, search: string = '', filters: any = {}) => {
     const [dashSummary, setDashSummary] = useState<DashboardStats | null>(null);
     const [clientes, setClientes] = useState<Consumidor[]>([]);
     const [vendedores, setVendedores] = useState<Vendedor[]>([]);
@@ -37,11 +37,13 @@ export const useRocketStats = (currentView: string, search: string = '') => {
 
     const loadItensPedidos = useCallback(async () => {
         try {
-            const data = await productApi.listItensPedidos(search, page * PAGE_SIZE);
+            const data = await productApi.listItensPedidos(
+                search, page * PAGE_SIZE, filters.status, filters.dataInicio, filters.dataFim
+            );
             setItensPedidos(data.items);
             setTotalPages(data.pages);
         } catch (error) { console.error(error); }
-    }, [page, search]);
+    }, [page, search, filters.status, filters.dataInicio, filters.dataFim]);
 
     useEffect(() => {
         if (currentView === 'dashboard') loadDashboard();

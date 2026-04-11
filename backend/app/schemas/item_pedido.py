@@ -8,6 +8,8 @@ class ItemPedidoBase(BaseModel):
     id_vendedor: str
     preco_BRL: float
     preco_frete: float
+    nome_produto: Optional[str] = None
+    status_pedido: Optional[str] = None
 
 class ItemPedido(ItemPedidoBase):
     model_config = ConfigDict(from_attributes=True)

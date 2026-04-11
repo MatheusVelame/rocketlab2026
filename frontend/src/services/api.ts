@@ -55,8 +55,10 @@ export const productApi = {
         const response = await api.get<Vendedor>(`/vendedores/${id}`);
         return response.data;
     },
-    listItensPedidos: async (q?: string, skip: number = 0) => {
-        const response = await api.get<PaginatedResponse<PedidoItem>>('/itens-pedidos', { params: { q, skip } });
+    listItensPedidos: async (q?: string, skip: number = 0, status?: string, dataInicio?: string, dataFim?: string) => {
+        const response = await api.get<PaginatedResponse<PedidoItem>>('/itens-pedidos', {
+            params: { q, skip, status, data_inicio: dataInicio, data_fim: dataFim }
+        });
         return response.data;
     },
     getItemDetalhes: async (idPedido: string, idItem: number) => {

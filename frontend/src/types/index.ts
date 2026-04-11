@@ -75,6 +75,8 @@ export interface PedidoItem {
   id_vendedor: string;
   preco_BRL: number;
   preco_frete: number;
+  nome_produto?: string;
+  status_pedido?: string;
 }
 
 export interface PedidoItemDetalhado {

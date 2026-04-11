@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, or_
 from typing import List, Optional
+from datetime import date
 
 from app.database import get_db
 from app.models.item_pedido import ItemPedido as ItemPedidoModel
@@ -18,15 +19,70 @@ router = APIRouter(prefix="/itens-pedidos", tags=["Itens Pedidos"])
 def list_itens_pedidos(
     skip: int = 0, 
     limit: int = 20, 
-    q: Optional[str] = None,
+    q: Optional[str] = Query(None),
+    status: Optional[str] = Query(None),
+    data_inicio: Optional[str] = Query(None),
+    data_fim: Optional[str] = Query(None),
     db: Session = Depends(get_db)
 ):
-    query = db.query(ItemPedidoModel)
-    if q:
-        query = query.filter(ItemPedidoModel.id_pedido.contains(q))
+    query = db.query(
+        ItemPedidoModel,
+        ProdutoModel.nome_produto,
+        PedidoModel.status
+    ).join(
+        ProdutoModel, ItemPedidoModel.id_produto == ProdutoModel.id_produto
+    ).join(
+        PedidoModel, ItemPedidoModel.id_pedido == PedidoModel.id_pedido
+    )
+    
+    # Busca inteligente: ID do pedido ou Nome do produto
+    if q and q.strip():
+        query = query.filter(or_(
+            ItemPedidoModel.id_pedido.contains(q),
+            ProdutoModel.nome_produto.contains(q)
+        ))
+    
+    # Filtro por Status Inteligente (Mapeia EN/PT)
+    if status and status.strip():
+        s = status.lower()
+        if s == 'entregue' or s == 'delivered':
+            query = query.filter(or_(PedidoModel.status.ilike('%entregue%'), PedidoModel.status.ilike('%delivered%')))
+        elif s == 'enviado' or s == 'shipped':
+            query = query.filter(or_(PedidoModel.status.ilike('%enviado%'), PedidoModel.status.ilike('%shipped%')))
+        elif s == 'processando' or s == 'processing':
+            query = query.filter(or_(PedidoModel.status.ilike('%processando%'), PedidoModel.status.ilike('%processing%')))
+        elif s == 'cancelado' or s == 'canceled':
+            query = query.filter(or_(PedidoModel.status.ilike('%cancelado%'), PedidoModel.status.ilike('%canceled%')))
+        else:
+            query = query.filter(PedidoModel.status.ilike(f'%{status}%'))
+        
+    # Filtro por Intervalo de Datas
+    try:
+        if data_inicio and data_inicio.strip():
+            d_ini = date.fromisoformat(data_inicio)
+            query = query.filter(PedidoModel.pedido_compra_timestamp >= d_ini)
+        if data_fim and data_fim.strip():
+            d_fim = date.fromisoformat(data_fim)
+            query = query.filter(PedidoModel.pedido_compra_timestamp <= d_fim)
+    except ValueError:
+        pass
     
     total = query.count()
-    items = query.offset(skip).limit(limit).all()
+    results = query.offset(skip).limit(limit).all()
+    
+    items = []
+    for item_model, produto_nome, pedido_status in results:
+        item_dict = {
+            "id_pedido": item_model.id_pedido,
+            "id_item": item_model.id_item,
+            "id_produto": item_model.id_produto,
+            "id_vendedor": item_model.id_vendedor,
+            "preco_BRL": item_model.preco_BRL,
+            "preco_frete": item_model.preco_frete,
+            "nome_produto": produto_nome,
+            "status_pedido": pedido_status
+        }
+        items.append(item_dict)
     
     return PaginatedResponse(
         items=items,
