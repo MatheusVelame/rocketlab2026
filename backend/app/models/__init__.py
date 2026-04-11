@@ -1,4 +1,3 @@
-# Importa todos os models para que o SQLAlchemy e o Alembic os registrem
 from app.models.consumidor import Consumidor
 from app.models.produto import Produto
 from app.models.vendedor import Vendedor

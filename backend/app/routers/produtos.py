@@ -9,20 +9,67 @@ from app.models.item_pedido import ItemPedido as ItemPedidoModel
 from app.models.avaliacao_pedido import AvaliacaoPedido as AvaliacaoPedidoModel
 from app.schemas.produto import Produto, ProdutoUpdate
 from app.schemas.analytics import ProductAnalytics, ProductPerformance
+from app.schemas.stats import GlobalStats
 
 router = APIRouter(prefix="/produtos", tags=["Produtos"])
 
-@router.get("/", response_model=List[Produto])
+@router.get("/stats/global", response_model=GlobalStats)
+def get_global_stats(db: Session = Depends(get_db)):
+    total_receita = db.query(func.sum(ItemPedidoModel.preco_BRL)).scalar() or 0.0
+    total_vendas = db.query(func.count(ItemPedidoModel.id_item)).scalar() or 0
+    total_produtos = db.query(func.count(ProdutoModel.id_produto)).scalar() or 0
+    
+    # Top Categoria (mais vendida)
+    top_cat_row = db.query(
+        ProdutoModel.categoria_produto,
+        func.count(ItemPedidoModel.id_item).label("vendas")
+    ).join(
+        ItemPedidoModel, ProdutoModel.id_produto == ItemPedidoModel.id_produto
+    ).group_by(
+        ProdutoModel.categoria_produto
+    ).order_by(func.count(ItemPedidoModel.id_item).desc()).first()
+    
+    top_categoria = top_cat_row.categoria_produto if top_cat_row else "N/A"
+    ticket_medio = total_receita / total_vendas if total_vendas > 0 else 0.0
+
+    return GlobalStats(
+        total_receita=total_receita,
+        total_vendas=total_vendas,
+        total_produtos=total_produtos,
+        ticket_medio=ticket_medio,
+        top_categoria=top_categoria
+    )
+
+@router.get("/categorias", response_model=List[str])
+def list_categorias(db: Session = Depends(get_db)):
+    return [c[0] for c in db.query(ProdutoModel.categoria_produto).distinct().all()]
+
+from app.schemas.paginated import PaginatedProdutos
+
+@router.get("/", response_model=PaginatedProdutos)
 def list_produtos(
     skip: int = 0, 
     limit: int = 20, 
     q: Optional[str] = None,
+    categoria: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
     query = db.query(ProdutoModel)
     if q:
         query = query.filter(ProdutoModel.nome_produto.contains(q))
-    return query.offset(skip).limit(limit).all()
+    if categoria:
+        query = query.filter(ProdutoModel.categoria_produto == categoria)
+    
+    total = query.count()
+    items = query.offset(skip).limit(limit).all()
+    
+    return PaginatedProdutos(
+        items=items,
+        total=total,
+        page=skip // limit + 1,
+        size=limit,
+        pages=(total + limit - 1) // limit
+    )
 
 @router.get("/{id_produto}", response_model=Produto)
 def get_produto(id_produto: str, db: Session = Depends(get_db)):

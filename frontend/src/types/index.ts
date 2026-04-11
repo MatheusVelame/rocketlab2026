@@ -29,3 +29,36 @@ export interface ProductAnalytics {
   performance: ProductPerformance;
   ultimas_avaliacoes: ReviewSummary[];
 }
+
+export interface GlobalStats {
+  total_receita: number;
+  total_vendas: number;
+  total_produtos: number;
+  ticket_medio: number;
+  top_categoria: string;
+}
+
+export interface PaginatedResponse<T> {
+  items: T[];
+  total: number;
+  page: number;
+  size: number;
+  pages: number;
+}
+
+export interface Consumidor {
+  id_consumidor: string;
+  nome_consumidor: string;
+  cidade: string;
+  estado: string;
+}
+
+export interface MonthlyRevenue {
+  month: string;
+  revenue: number;
+}
+
+export interface DashboardStats {
+  revenue_history: MonthlyRevenue[];
+  status_distribution: Record<string, number>;
+}

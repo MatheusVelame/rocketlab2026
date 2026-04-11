@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Produto, ProductAnalytics } from '../types';
+import type { Produto, ProductAnalytics, GlobalStats, PaginatedResponse, Consumidor, DashboardStats } from '../types';
 
 const API_URL = 'http://localhost:8000';
 
@@ -8,8 +8,12 @@ const api = axios.create({
 });
 
 export const productApi = {
-    list: async (q?: string, skip: number = 0) => {
-        const response = await api.get<Produto[]>('/produtos', { params: { q, skip } });
+    list: async (q?: string, skip: number = 0, categoria?: string) => {
+        const response = await api.get<PaginatedResponse<Produto>>('/produtos', { params: { q, skip, categoria } });
+        return response.data;
+    },
+    getCategories: async () => {
+        const response = await api.get<string[]>('/produtos/categorias');
         return response.data;
     },
     getOne: async (id: string) => {
@@ -29,6 +33,22 @@ export const productApi = {
     },
     getAnalytics: async (id: string) => {
         const response = await api.get<ProductAnalytics>(`/produtos/${id}/analytics`);
+        return response.data;
+    },
+    getGlobalStats: async () => {
+        const response = await api.get<GlobalStats>('/produtos/stats/global');
+        return response.data;
+    },
+    listClientes: async (q?: string, skip: number = 0) => {
+        const response = await api.get<PaginatedResponse<Consumidor>>('/clientes', { params: { q, skip } });
+        return response.data;
+    },
+    getCliente: async (id: string) => {
+        const response = await api.get<Consumidor>(`/clientes/${id}`);
+        return response.data;
+    },
+    getDashboardSummary: async () => {
+        const response = await api.get<DashboardStats>('/dashboard');
         return response.data;
     }
 };

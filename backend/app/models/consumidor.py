@@ -1,14 +1,11 @@
-from sqlalchemy import String
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-
+from sqlalchemy import Column, String
 from app.database import Base
-
 
 class Consumidor(Base):
     __tablename__ = "consumidores"
 
-    id_consumidor: Mapped[str] = mapped_column(String(32), primary_key=True)
-    prefixo_cep: Mapped[str] = mapped_column(String(10))
-    nome_consumidor: Mapped[str] = mapped_column(String(255))
-    cidade: Mapped[str] = mapped_column(String(100))
-    estado: Mapped[str] = mapped_column(String(2))
+    id_consumidor = Column(String, primary_key=True, index=True)
+    prefixo_cep = Column(String)
+    nome_consumidor = Column(String)
+    cidade = Column(String)
+    estado = Column(String)
