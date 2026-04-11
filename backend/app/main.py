@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import produtos, clientes, dashboard
+from app.routers import produtos, clientes, dashboard, vendedores
 
 app = FastAPI(
     title="Sistema de Gerenciamento de E-Commerce",
@@ -19,6 +19,7 @@ app.add_middleware(
 
 app.include_router(produtos.router)
 app.include_router(clientes.router)
+app.include_router(vendedores.router)
 app.include_router(dashboard.router)
 
 @app.get("/", tags=["Health"])

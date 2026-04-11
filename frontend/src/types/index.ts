@@ -54,7 +54,16 @@ export interface PaginatedResponse<T> {
 
 export interface Consumidor {
   id_consumidor: string;
+  prefixo_cep: string;
   nome_consumidor: string;
+  cidade: string;
+  estado: string;
+}
+
+export interface Vendedor {
+  id_vendedor: string;
+  nome_vendedor: string;
+  prefixo_cep: string;
   cidade: string;
   estado: string;
 }

@@ -9,6 +9,7 @@ router = APIRouter(prefix="/clientes", tags=["clientes"])
 
 class ConsumidorSchema(BaseModel):
     id_consumidor: str
+    prefixo_cep: Optional[str] = None
     nome_consumidor: Optional[str] = None
     cidade: Optional[str] = None
     estado: Optional[str] = None

@@ -1,16 +1,16 @@
 import { useState, type ReactNode } from 'react';
 import { DefaultTemplate } from '../../components/templates/DefaultTemplate';
-import { Customers as CustomersOrganism } from '../../components/organisms/Customers';
-import { CustomerModal } from '../../components/organisms/CustomerModal';
+import { Sellers as SellersOrganism } from '../../components/organisms/Sellers';
+import { SellerModal } from '../../components/organisms/SellerModal';
 import { useRocketStats } from '../../hooks/useRocketStats';
-import type { Consumidor } from '../../types';
+import type { Vendedor } from '../../types';
 
-export const Customers = () => {
+export const Sellers = () => {
     const {
-        clientes, page, setPage, totalPages
-    } = useRocketStats('consumidores');
+        vendedores, page, setPage, totalPages
+    } = useRocketStats('vendedores');
 
-    const [selectedCustomer, setSelectedCustomer] = useState<Consumidor | null>(null);
+    const [selectedSeller, setSelectedSeller] = useState<Vendedor | null>(null);
 
     const renderPagination = (current: number, total: number, onChange: (p: number) => void): ReactNode => {
         if (total <= 1) return null;
@@ -67,21 +67,21 @@ export const Customers = () => {
             selectedCategory=""
             onCategorySelect={() => { }}
         >
-            <CustomersOrganism
-                clientes={clientes}
-                clientPage={page}
-                totalClientPages={totalPages}
+            <SellersOrganism
+                vendedores={vendedores}
+                page={page}
+                totalPages={totalPages}
                 renderPagination={renderPagination}
                 onPageChange={setPage}
-                onViewDetails={setSelectedCustomer}
+                onViewDetails={setSelectedSeller}
             />
 
-            <CustomerModal
-                customer={selectedCustomer}
-                onClose={() => setSelectedCustomer(null)}
+            <SellerModal
+                seller={selectedSeller}
+                onClose={() => setSelectedSeller(null)}
             />
         </DefaultTemplate>
     );
 };
 
-export default Customers;
+export default Sellers;

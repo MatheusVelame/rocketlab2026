@@ -146,12 +146,20 @@ export const ProductModal = ({
                                 {renderField('Largura (cm)', 'largura_centimetros', 'number')}
                             </div>
 
-                            <button
-                                onClick={onSave}
-                                style={{ gridColumn: 'span 2', backgroundColor: '#4f46e5', color: 'white', fontWeight: '900', padding: '24px', borderRadius: '24px', marginTop: '16px', fontSize: '14px', border: 'none', cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.1em', boxShadow: '0 10px 15px -3px rgba(79, 70, 229, 0.3)' }}
-                            >
-                                Sincronizar Produto na Base
-                            </button>
+                            <div style={{ gridColumn: 'span 2', display: 'flex', gap: '16px', marginTop: '16px' }}>
+                                <button
+                                    onClick={onClose}
+                                    style={{ flex: 1, backgroundColor: 'rgba(255,255,255,0.05)', color: '#94a3b8', fontWeight: '900', padding: '24px', borderRadius: '24px', fontSize: '14px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.1em', transition: 'all 0.3s' }}
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    onClick={onSave}
+                                    style={{ flex: 2, backgroundColor: '#4f46e5', color: 'white', fontWeight: '900', padding: '24px', borderRadius: '24px', fontSize: '14px', border: 'none', cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.1em', boxShadow: '0 10px 15px -3px rgba(79, 70, 229, 0.3)', transition: 'all 0.3s' }}
+                                >
+                                    Sincronizar Produto na Base
+                                </button>
+                            </div>
                         </div>
                     </div>
                 ) : product && (

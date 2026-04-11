@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Produto, ProductAnalytics, GlobalStats, PaginatedResponse, Consumidor, DashboardStats } from '../types';
+import type { Produto, ProductAnalytics, GlobalStats, PaginatedResponse, Consumidor, Vendedor, DashboardStats } from '../types';
 
 const API_URL = 'http://localhost:8000';
 
@@ -45,6 +45,14 @@ export const productApi = {
     },
     getCliente: async (id: string) => {
         const response = await api.get<Consumidor>(`/clientes/${id}`);
+        return response.data;
+    },
+    listVendedores: async (q?: string, skip: number = 0) => {
+        const response = await api.get<PaginatedResponse<Vendedor>>('/vendedores', { params: { q, skip } });
+        return response.data;
+    },
+    getVendedor: async (id: string) => {
+        const response = await api.get<Vendedor>(`/vendedores/${id}`);
         return response.data;
     },
     getDashboardSummary: async () => {
