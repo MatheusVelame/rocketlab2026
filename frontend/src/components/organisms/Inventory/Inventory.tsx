@@ -36,7 +36,7 @@ export const Inventory = memo(({
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px' }}>
                 <StatsCard label="Faturamento" value={`R$ ${globalStats.total_receita.toLocaleString()}`} icon={icons.revenue} color="#6366f1" />
                 <StatsCard label="Volume Vendas" value={globalStats.total_vendas.toLocaleString()} icon={icons.sales} color="#10b981" />
-                <StatsCard label="Ticket Médio" value={`R$ ${globalStats.ticket_medio.toFixed(2)}`} icon={icons.ticket} color="#f59e0b" />
+                <StatsCard label="Venda Média" value={`R$ ${globalStats.ticket_medio.toFixed(2)}`} icon={icons.ticket} color="#f59e0b" />
                 <StatsCard label="Produtos Únicos" value={globalStats.total_produtos.toLocaleString()} icon={icons.items} color="#8b5cf6" />
             </div>
 

@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer } from 'recharts';
 import type { Produto, ProductAnalytics } from '../../../types';
 
 interface ProductModalProps {
@@ -56,7 +55,8 @@ export const ProductModal = ({
         close: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>,
         rocket: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09Z" /><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2Z" /><path d="M9 12H4s.5-1 1.4-2.1c.4-.5.8-1 1.2-1.3.3-.3.8-.5 1.3-.6h1.1L12 11Z" /><path d="M15 9V4s-1 .5-2.1 1.4c-.5.4-1 .8-1.3 1.2-.3.3-.5.8-.6 1.3V9l3 3Z" /></svg>,
         box: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" /><path d="m3.3 7 8.7 5 8.7-5" /><path d="M12 22V12" /></svg>,
-        star: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>,
+        star: <svg width="16" height="16" viewBox="0 0 24 24" fill="#f59e0b" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>,
+        starOutline: <svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>,
         trending: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17" /><polyline points="16 7 22 7 22 13" /></svg>,
         sales: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" /><path d="M3 6h18" /><path d="M16 10a4 4 0 0 1-8 0" /></svg>,
         ruler: <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m21.43 12.48-6-6a2 2 0 0 0-2.83 0l-8.66 8.64a2 2 0 0 0 0 2.83l6 6a2 2 0 0 0 2.83 0l8.66-8.64a2 2 0 0 0 0-2.83ZM7 10.5 8.5 12m1-3 1.5 1.5m1-3 1.5 1.5m1-3 1.5 1.5" /></svg>
@@ -173,8 +173,8 @@ export const ProductModal = ({
                                 return (
                                     <div style={{
                                         padding: '32px', borderRadius: '40px', border: '1px solid', transition: 'all 0.3s',
-                                        backgroundColor: insight.type === 'danger' ? 'rgba(244,63,94,0.1)' : 'rgba(79,70,229,0.05)',
-                                        borderColor: insight.type === 'danger' ? 'rgba(244,63,94,0.2)' : 'rgba(79,70,229,0.1)',
+                                        backgroundColor: insight.type === 'danger' ? 'rgba(244,63,94,0.1)' : insight.type === 'info' ? 'rgba(56,189,248,0.1)' : 'rgba(79,70,229,0.05)',
+                                        borderColor: insight.type === 'danger' ? 'rgba(244,63,94,0.2)' : insight.type === 'info' ? 'rgba(56,189,248,0.2)' : 'rgba(79,70,229,0.1)',
                                         color: insight.type === 'danger' ? '#fecdd3' : '#e0e7ff'
                                     }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px', fontSize: '10px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
@@ -199,14 +199,14 @@ export const ProductModal = ({
                             <div style={{ gridColumn: 'span 8', display: 'flex', flexDirection: 'column', gap: '32px' }}>
                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
                                     {[
-                                        { l: 'Vendas', v: analytics?.performance.total_vendas || 0, i: icons.sales, c: '#818cf8' },
-                                        { l: 'Ticket M.', v: `R$ ${Math.round(analytics?.performance.preco_medio || 0).toLocaleString()}`, i: icons.trending, c: '#10b981' },
-                                        { l: 'Nota G.', v: analytics?.performance.avaliacao_media.toFixed(1) || '0.0', i: icons.star, c: '#f59e0b' },
+                                        { l: 'Vendas Totais', v: analytics?.performance.total_vendas || 0, i: icons.sales, c: '#818cf8' },
+                                        { l: 'Preço Médio', v: `R$ ${Math.round(analytics?.performance.preco_medio || 0).toLocaleString()}`, i: icons.trending, c: '#10b981' },
+                                        { l: 'Nota Média', v: analytics?.performance.avaliacao_media.toFixed(1) || '0.0', i: icons.star, c: '#f59e0b' },
                                         { l: 'Peso (g)', v: `${product.peso_produto_gramas}`, i: icons.box, c: '#c084fc' },
                                     ].map((s, i) => (
                                         <div key={i} style={{ backgroundColor: 'rgba(2, 6, 23, 0.6)', padding: '20px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.05)', textAlign: 'center' }}>
                                             <div style={{ color: s.c, marginBottom: '8px', display: 'flex', justifyContent: 'center' }}>{s.i}</div>
-                                            <p style={{ fontSize: '9px', fontWeight: '900', color: '#334155', textTransform: 'uppercase', marginBottom: '4px', margin: 0 }}>{s.l}</p>
+                                            <p style={{ fontSize: '9px', fontWeight: '900', color: '#64748b', textTransform: 'uppercase', marginBottom: '4px', margin: 0 }}>{s.l}</p>
                                             <h4 style={{ fontSize: '18px', fontWeight: '900', color: 'white', margin: 0 }}>{s.v}</h4>
                                         </div>
                                     ))}
@@ -228,34 +228,70 @@ export const ProductModal = ({
                                                 ))}
                                             </div>
                                         </div>
-                                        <div style={{ backgroundColor: 'rgba(2, 6, 23, 0.3)', borderRadius: '40px', border: '1px solid rgba(255,255,255,0.05)', padding: '32px', height: '192px', position: 'relative' }}>
-                                            <span style={{ position: 'absolute', top: '16px', left: '50%', transform: 'translateX(-50%)', fontSize: '8px', fontWeight: '900', color: '#334155', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Radar DNA</span>
-                                            <ResponsiveContainer width="100%" height="100%">
-                                                <RadarChart cx="50%" cy="50%" outerRadius="80%" data={analytics?.performance ? [
-                                                    { subject: 'Vendas', A: Math.min(analytics.performance.total_vendas * 5, 100) },
-                                                    { subject: 'Receita', A: Math.min(analytics.performance.receita_total / 20, 100) },
-                                                    { subject: 'Nota', A: Math.max(0, analytics.performance.avaliacao_media * 20) },
-                                                    { subject: 'Freq.', A: Math.min(analytics.performance.total_avaliacoes * 5, 100) },
-                                                ] : []}>
-                                                    <PolarGrid stroke="rgba(255,255,255,0.1)" />
-                                                    <PolarAngleAxis dataKey="subject" tick={{ fill: '#475569', fontSize: 6, fontWeight: '900' }} />
-                                                    <Radar name="P" dataKey="A" stroke="#6366f1" fill="#6366f1" fillOpacity={0.6} />
-                                                </RadarChart>
-                                            </ResponsiveContainer>
+                                        <div style={{ backgroundColor: 'rgba(2, 6, 23, 0.4)', borderRadius: '40px', border: '1px solid rgba(255,255,255,0.1)', padding: '32px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                                            <p style={{ fontSize: '10px', fontWeight: '900', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.1em', margin: 0 }}>Saúde & Performance</p>
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                                {[
+                                                    {
+                                                        label: 'Aprovação dos Clientes',
+                                                        val: (analytics?.performance.avaliacao_media || 0) * 20,
+                                                        color: '#f59e0b',
+                                                        hint: 'Calculado com base na nota média (0 a 5) dada pelos consumidores.'
+                                                    },
+                                                    {
+                                                        label: 'Giro de Vendas',
+                                                        val: Math.min(((analytics?.performance.total_vendas || 0) / 50) * 100, 100),
+                                                        color: '#10b981',
+                                                        hint: 'Mede a velocidade de saída do estoque em relação à meta de giro (50 un.).'
+                                                    },
+                                                    {
+                                                        label: 'Popularidade do Item',
+                                                        val: Math.min(((analytics?.performance.total_avaliacoes || 0) / 10) * 100, 100),
+                                                        color: '#8b5cf6',
+                                                        hint: 'Reflete o volume total de engajamento e feedbacks recebidos.'
+                                                    },
+                                                ].map((bar, i) => (
+                                                    <div key={i} title={bar.hint} style={{ cursor: 'help' }}>
+                                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                                                            <span style={{ fontSize: '11px', fontWeight: '700', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                                {bar.label}
+                                                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></svg>
+                                                            </span>
+                                                            <span style={{ fontSize: '11px', fontWeight: '900', color: 'white' }}>{Math.round(bar.val)}%</span>
+                                                        </div>
+                                                        <div style={{ height: '8px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '999px', overflow: 'hidden' }}>
+                                                            <motion.div
+                                                                initial={{ width: 0 }}
+                                                                animate={{ width: `${bar.val}%` }}
+                                                                transition={{ delay: 0.5 + i * 0.1, duration: 1 }}
+                                                                style={{ height: '100%', backgroundColor: bar.color, borderRadius: '999px', boxShadow: `0 0 10px ${bar.color}40` }}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
                                         </div>
                                     </div>
-                                    <div style={{ backgroundColor: 'rgba(2, 6, 23, 0.3)', borderRadius: '40px', border: '1px solid rgba(255,255,255,0.05)', padding: '32px', display: 'flex', flexDirection: 'column', height: '100%', maxHeight: '350px' }}>
+                                    <div style={{ backgroundColor: 'rgba(2, 6, 23, 0.4)', borderRadius: '40px', border: '1px solid rgba(255,255,255,0.1)', padding: '32px', display: 'flex', flexDirection: 'column', height: '100%', maxHeight: '420px' }}>
                                         <p style={{ fontSize: '10px', fontWeight: '900', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px', margin: 0 }}>Reviews Sugeridas</p>
                                         <div style={{ flex: 1, overflowY: 'auto', paddingRight: '8px', display: 'flex', flexDirection: 'column', gap: '12px' }} className="scrollbar-hide">
-                                            {analytics?.ultimas_avaliacoes.map((rev, i) => (
-                                                <div key={i} style={{ padding: '16px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                            {analytics?.ultimas_avaliacoes && analytics.ultimas_avaliacoes.length > 0 ? analytics.ultimas_avaliacoes.map((rev, i) => (
+                                                <div key={i} style={{ padding: '16px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '10px', fontWeight: '900', color: '#f59e0b' }}>
-                                                        <div style={{ display: 'flex', gap: '2px' }}>{Array.from({ length: rev.avaliacao }).map((_, j) => <span key={j}>{icons.star}</span>)}</div>
-                                                        <span style={{ color: '#475569', fontStyle: 'italic' }}>{new Date(rev.data_comentario).toLocaleDateString()}</span>
+                                                        <div style={{ display: 'flex', gap: '2px' }}>
+                                                            {Array.from({ length: 5 }).map((_, j) => (
+                                                                <span key={j}>{j < rev.avaliacao ? icons.star : icons.starOutline}</span>
+                                                            ))}
+                                                        </div>
+                                                        <span style={{ color: '#475569', fontStyle: 'italic' }}>{new Date(rev.data_comentario!).toLocaleDateString()}</span>
                                                     </div>
-                                                    <p style={{ fontSize: '12px', color: '#cbd5e1', fontStyle: 'italic', lineHeight: 1.6, margin: 0 }}>"{rev.comentario || 'Sem comentário.'}"</p>
+                                                    <p style={{ fontSize: '12px', color: '#e2e8f0', fontStyle: 'italic', lineHeight: 1.6, margin: 0 }}>"{rev.comentario || 'Sem comentário.'}"</p>
                                                 </div>
-                                            ))}
+                                            )) : (
+                                                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#475569', fontSize: '12px', fontStyle: 'italic' }}>
+                                                    Nenhuma avaliação registrada ainda.
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </div>

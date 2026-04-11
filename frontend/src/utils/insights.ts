@@ -29,6 +29,12 @@ export const getSmartInsight = (data: ProductAnalytics) => {
             type: 'info'
         };
     }
+    if (sales < 5) {
+        return {
+            text: "🚀 ESTÁGIO DE DESCOBERTA: Poucas vendas registradas. O produto está em fase de validação pelo mercado.",
+            type: 'info'
+        };
+    }
     return {
         text: "📊 PERFORMANCE ESTÁVEL: Fluxo recorrente com avaliações dentro da normalidade operacional.",
         type: 'default'
