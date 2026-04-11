@@ -185,13 +185,13 @@ export const ProductModal = ({
                                 );
                             })()}
                         </div>
-                        <div style={{ gridColumn: 'span 8', display: 'flex', flexDirection: 'column', gap: '40px' }}>
+                        <div style={{ gridColumn: 'span 8', display: 'flex', flexDirection: 'column', gap: '40px', paddingTop: '24px' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                 <div>
                                     <h2 style={{ fontSize: '40px', fontWeight: '900', color: 'white', fontStyle: 'italic', letterSpacing: '-0.05em', margin: '0 0 16px 0' }}>{product.nome_produto}</h2>
                                     <span style={{ backgroundColor: '#4f46e5', padding: '4px 16px', borderRadius: '9999px', fontSize: '10px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'white' }}>{product.categoria_produto.replace(/_/g, ' ')}</span>
                                 </div>
-                                <div style={{ display: 'flex', gap: '8px' }}>
+                                <div style={{ display: 'flex', gap: '8px', paddingRight: '48px' }}>
                                     <button onClick={onEdit} style={{ width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '16px', border: 'none', cursor: 'pointer', color: '#94a3b8' }}> {icons.edit} </button>
                                     <button onClick={() => onDelete(product.id_produto)} style={{ width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(244,63,94,0.1)', borderRadius: '16px', border: '1px solid rgba(244,63,94,0.2)', cursor: 'pointer', color: '#f43f5e' }}> {icons.delete} </button>
                                 </div>
