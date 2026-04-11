@@ -3,6 +3,7 @@ import { Inventory } from './Pages/Inventory';
 import { Analytics } from './Pages/Analytics';
 import { Customers } from './Pages/Customers';
 import { Sellers } from './Pages/Sellers';
+import OrderItems from './Pages/OrderItems';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/estoque" element={<Inventory />} />
         <Route path="/consumidores" element={<Customers />} />
         <Route path="/vendedores" element={<Sellers />} />
+        <Route path="/itens" element={<OrderItems />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </Router>

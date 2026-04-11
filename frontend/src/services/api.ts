@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Produto, ProductAnalytics, GlobalStats, PaginatedResponse, Consumidor, Vendedor, DashboardStats } from '../types';
+import type { Produto, ProductAnalytics, GlobalStats, PaginatedResponse, Consumidor, Vendedor, DashboardStats, PedidoItem, PedidoItemDetalhado } from '../types';
 
 const API_URL = 'http://localhost:8000';
 
@@ -53,6 +53,14 @@ export const productApi = {
     },
     getVendedor: async (id: string) => {
         const response = await api.get<Vendedor>(`/vendedores/${id}`);
+        return response.data;
+    },
+    listItensPedidos: async (q?: string, skip: number = 0) => {
+        const response = await api.get<PaginatedResponse<PedidoItem>>('/itens-pedidos', { params: { q, skip } });
+        return response.data;
+    },
+    getItemDetalhes: async (idPedido: string, idItem: number) => {
+        const response = await api.get<PedidoItemDetalhado>(`/itens-pedidos/${idPedido}/${idItem}/detalhes`);
         return response.data;
     },
     getDashboardSummary: async () => {

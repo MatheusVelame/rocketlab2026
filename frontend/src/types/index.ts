@@ -68,6 +68,42 @@ export interface Vendedor {
   estado: string;
 }
 
+export interface PedidoItem {
+  id_pedido: string;
+  id_item: number;
+  id_produto: string;
+  id_vendedor: string;
+  preco_BRL: number;
+  preco_frete: number;
+}
+
+export interface PedidoItemDetalhado {
+  item: PedidoItem;
+  status_pedido: string;
+  data_compra?: string;
+  data_entrega?: string;
+  entrega_no_prazo?: string;
+  tempo_entrega_dias?: number;
+  diferenca_entrega_dias?: number;
+  consumidor?: {
+    id: string;
+    nome: string;
+    cidade: string;
+    estado: string;
+  };
+  vendedor?: {
+    id: string;
+    nome: string;
+    cidade: string;
+    estado: string;
+  };
+  produto?: {
+    id: string;
+    nome: string;
+    categoria: string;
+  };
+}
+
 export interface MonthlyRevenue {
   month: string;
   revenue: number;
