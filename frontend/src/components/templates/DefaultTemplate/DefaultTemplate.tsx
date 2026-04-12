@@ -25,91 +25,92 @@ export const DefaultTemplate = ({
     const navigate = useNavigate();
     const currentView = location.pathname.replace('/', '') || 'estoque';
 
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
     const searchIcon = <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>;
+    const menuIcon = <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="18" y2="18" /></svg>;
 
     return (
-        <div style={{ display: 'flex', height: '100vh', backgroundColor: '#020617', color: '#e2e8f0', overflow: 'hidden' }}>
-            <Sidebar
-                currentView={currentView}
-                onViewChange={(view) => navigate(`/${view}`)}
-                isCollapsed={isSidebarCollapsed}
-                toggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-                categories={categories}
-                selectedCategory={selectedCategory}
-                onCategorySelect={onCategorySelect}
-            />
+        <div className="flex h-screen bg-[#020617] text-[#e2e8f0] overflow-hidden relative">
+            {/* Sidebar Overlay for Mobile */}
+            {isSidebarOpen && (
+                <div
+                    className="fixed inset-0 bg-black/60 z-[45] lg:hidden backdrop-blur-sm"
+                    onClick={() => setIsSidebarOpen(false)}
+                />
+            )}
 
-            <main style={{
-                flex: 1,
-                display: 'flex',
-                flexDirection: 'column',
-                position: 'relative',
-                overflow: 'hidden',
-                transform: 'translateZ(0)', // Força aceleração de Hardware
-                willChange: 'transform'
-            }}>
-                <header style={{ height: '80px', borderBottom: '1px solid rgba(255, 255, 255, 0.05)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 40px', backgroundColor: 'rgba(2, 6, 23, 0.4)', backdropFilter: 'blur(20px)', flexShrink: 0, zIndex: 10 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                        <h2 style={{ fontSize: '20px', fontWeight: '900', color: 'white', fontStyle: 'italic', letterSpacing: '-0.05em', textTransform: 'uppercase', margin: 0 }}>{currentView}</h2>
-                        <div style={{ height: '24px', width: '1px', backgroundColor: 'rgba(255,255,255,0.1)' }} />
+            <div className={`
+                fixed inset-y-0 left-0 z-[50] transition-transform duration-300 lg:relative lg:translate-x-0
+                ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+            `}>
+                <Sidebar
+                    currentView={currentView}
+                    onViewChange={(view) => {
+                        navigate(`/${view}`);
+                        setIsSidebarOpen(false);
+                    }}
+                    isCollapsed={isSidebarCollapsed}
+                    toggleCollapse={() => {
+                        if (window.innerWidth < 1024) {
+                            setIsSidebarOpen(false);
+                        } else {
+                            setIsSidebarCollapsed(!isSidebarCollapsed);
+                        }
+                    }}
+                    categories={categories}
+                    selectedCategory={selectedCategory}
+                    onCategorySelect={onCategorySelect}
+                />
+            </div>
+
+            <main className="flex-1 flex flex-col min-w-0 relative h-full">
+                <header className="h-20 border-b border-white/5 flex items-center justify-between px-4 sm:px-10 bg-[#020617]/40 backdrop-blur-xl flex-shrink-0 z-10 gap-4">
+                    <div className="flex items-center gap-4 flex-1">
+                        <button
+                            className="lg:hidden p-2 text-slate-400 hover:text-white transition-colors"
+                            onClick={() => {
+                                setIsSidebarOpen(true);
+                                setIsSidebarCollapsed(false);
+                            }}
+                        >
+                            {menuIcon}
+                        </button>
+                        <h2 className="hidden sm:block text-xl font-black text-white italic uppercase tracking-tighter margin-0 whitespace-nowrap">{currentView}</h2>
+                        <div className="hidden sm:block h-6 w-[1px] bg-white/10" />
+
                         {currentView !== 'dashboard' && (
-                            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                                <span style={{ position: 'absolute', left: '16px', color: '#475569', display: 'flex', alignItems: 'center' }}>{searchIcon}</span>
+                            <div className="relative flex items-center flex-1 max-w-xs sm:max-w-md">
+                                <span className="absolute left-4 text-slate-500 flex items-center">{searchIcon}</span>
                                 <input
-                                    placeholder="Busca global..."
-                                    style={{
-                                        backgroundColor: 'rgba(15, 23, 42, 0.5)',
-                                        border: '1px solid rgba(255, 255, 255, 0.05)',
-                                        borderRadius: '12px',
-                                        padding: '10px 16px 10px 40px',
-                                        fontSize: '12px',
-                                        fontWeight: '700',
-                                        color: 'white',
-                                        outline: 'none',
-                                        width: '320px',
-                                        transition: 'all 0.3s'
-                                    }}
+                                    placeholder="Busca..."
+                                    className="w-full bg-slate-900/50 border border-white/5 rounded-xl py-2 pl-10 pr-4 text-xs font-bold text-white outline-none focus:border-indigo-500/50 transition-all"
                                     value={search}
                                     onChange={(e) => onSearchChange(e.target.value)}
                                 />
                             </div>
                         )}
                     </div>
+
                     {currentView === 'estoque' && onAddNew && (
                         <button
                             onClick={onAddNew}
-                            style={{
-                                backgroundColor: '#4f46e5',
-                                color: 'white',
-                                fontWeight: '900',
-                                padding: '10px 24px',
-                                borderRadius: '12px',
-                                fontSize: '12px',
-                                border: 'none',
-                                cursor: 'pointer',
-                                boxShadow: '0 10px 15px -3px rgba(79, 70, 229, 0.2)',
-                                transition: 'all 0.3s'
-                            }}
+                            className="bg-indigo-600 hover:bg-indigo-500 text-white font-black py-2 px-4 sm:px-6 rounded-xl text-[10px] sm:text-xs border-none cursor-pointer shadow-lg shadow-indigo-500/20 transition-all whitespace-nowrap"
                         >
-                            Novo Registro
+                            <span className="hidden sm:inline">Novo Registro</span>
+                            <span className="sm:hidden">+</span>
                         </button>
                     )}
                 </header>
 
-                <section style={{
-                    flex: 1,
-                    overflowY: 'auto',
-                    padding: '40px',
-                    WebkitOverflowScrolling: 'touch', // Scroll suave no iOS
-                    scrollBehavior: 'smooth'
-                }} className="scrollbar-hide">
+                <section className="flex-1 overflow-y-auto p-4 sm:p-10 scrollbar-hide scroll-smooth">
                     {children}
                 </section>
             </main>
         </div>
     );
 };
+
 
 export default DefaultTemplate;

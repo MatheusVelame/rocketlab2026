@@ -1,21 +1,12 @@
-import { type ReactNode } from 'react';
 import type { Vendedor } from '../../../types';
 
 interface SellersProps {
     vendedores: Vendedor[];
-    page: number;
-    totalPages: number;
-    renderPagination: (current: number, total: number, onChange: (p: number) => void) => ReactNode;
-    onPageChange: (p: number) => void;
     onViewDetails: (v: Vendedor) => void;
 }
 
 export const Sellers = ({
     vendedores,
-    page,
-    totalPages,
-    renderPagination,
-    onPageChange,
     onViewDetails
 }: SellersProps) => {
     const icons = {
@@ -24,32 +15,33 @@ export const Sellers = ({
     };
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <div style={{ backgroundColor: 'rgba(15, 23, 42, 0.4)', border: '1px solid rgba(255, 255, 255, 0.05)', borderRadius: '40px', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}>
-                <table style={{ width: '100%', textAlign: 'left', fontSize: '14px', borderCollapse: 'separate', borderSpacing: 0 }}>
-                    <thead style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)', fontSize: '10px', fontWeight: '900', textTransform: 'uppercase', color: '#64748b', letterSpacing: '0.1em' }}>
+        <div className="flex flex-col gap-6">
+            {/* Desktop Table */}
+            <div className="hidden lg:block bg-slate-900/40 border border-white/5 rounded-[40px] overflow-hidden shadow-2xl">
+                <table className="w-full text-left text-sm border-collapse border-spacing-0">
+                    <thead className="bg-white/5 text-[10px] font-black uppercase text-slate-500 tracking-widest">
                         <tr>
-                            <th style={{ padding: '24px' }}>ID</th>
-                            <th style={{ padding: '24px' }}>Nome</th>
-                            <th style={{ padding: '24px' }}>Sede / Localização</th>
-                            <th style={{ padding: '24px', textAlign: 'center' }}>Ações</th>
+                            <th className="p-6">ID</th>
+                            <th className="p-6">Nome</th>
+                            <th className="p-6">Sede / Localização</th>
+                            <th className="p-6 text-center">Ações</th>
                         </tr>
                     </thead>
-                    <tbody style={{ color: '#e2e8f0' }}>
+                    <tbody className="text-slate-200">
                         {vendedores.map((v) => (
-                            <tr key={v.id_vendedor} style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.05)' }}>
-                                <td style={{ padding: '24px', fontFamily: 'monospace', fontSize: '10px', color: '#475569' }}>#{v.id_vendedor.substr(0, 16)}...</td>
-                                <td style={{ padding: '24px', fontWeight: '700' }}>{v.nome_vendedor}</td>
-                                <td style={{ padding: '24px' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#94a3b8', fontSize: '12px', whiteSpace: 'nowrap' }}>
+                            <tr key={v.id_vendedor} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                                <td className="p-6 font-mono text-[10px] text-slate-600">#{v.id_vendedor.substr(0, 16)}...</td>
+                                <td className="p-6 font-bold">{v.nome_vendedor}</td>
+                                <td className="p-6">
+                                    <div className="flex items-center gap-2 text-slate-400 text-xs whitespace-nowrap">
                                         {icons.pin}
-                                        <span style={{ fontWeight: '600' }}>{v.cidade}, {v.estado}</span>
+                                        <span className="font-semibold">{v.cidade}, {v.estado}</span>
                                     </div>
                                 </td>
-                                <td style={{ padding: '24px', textAlign: 'center' }}>
+                                <td className="p-6 text-center">
                                     <button
                                         onClick={() => onViewDetails(v)}
-                                        style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#818cf8', padding: '8px 16px', borderRadius: '12px', fontSize: '10px', fontWeight: '900', textTransform: 'uppercase', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', transition: 'all 0.3s' }}
+                                        className="bg-white/5 border border-white/10 text-indigo-400 px-4 py-2 rounded-xl text-[10px] font-black uppercase flex inline-flex items-center gap-2 transition-all hover:bg-white/10"
                                     >
                                         {icons.details} Detalhes
                                     </button>
@@ -59,11 +51,35 @@ export const Sellers = ({
                     </tbody>
                 </table>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
-                {renderPagination(page, totalPages, onPageChange)}
+
+            {/* Mobile Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:hidden gap-4">
+                {vendedores.map((v) => (
+                    <div key={v.id_vendedor} className="bg-slate-900/40 p-6 rounded-3xl border border-white/5 flex flex-col gap-4">
+                        <div className="flex justify-between items-start">
+                            <div className="flex flex-col gap-1">
+                                <span className="font-mono text-[10px] text-slate-600">#{v.id_vendedor.substr(0, 8)}...</span>
+                                <h4 className="font-bold text-lg text-white">{v.nome_vendedor}</h4>
+                            </div>
+                            <div className="px-2 py-1 bg-indigo-500/10 rounded flex items-center gap-1 text-[10px] text-indigo-300 font-bold uppercase">
+                                {icons.pin} {v.estado}
+                            </div>
+                        </div>
+                        <p className="text-xs text-slate-500 flex items-center gap-2">
+                            {v.cidade}
+                        </p>
+                        <button
+                            onClick={() => onViewDetails(v)}
+                            className="bg-indigo-600/10 border border-indigo-600/20 text-indigo-400 w-full p-3 rounded-xl text-[10px] font-black uppercase flex items-center justify-center gap-2"
+                        >
+                            {icons.details} Ver Detalhes
+                        </button>
+                    </div>
+                ))}
             </div>
         </div>
     );
 };
+
 
 export default Sellers;

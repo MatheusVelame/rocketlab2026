@@ -27,67 +27,68 @@ export const OrderItemModal = ({ details, onClose }: OrderItemModalProps) => {
     const isOnTime = details.entrega_no_prazo === 'SIM';
 
     return (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', backgroundColor: 'rgba(2, 6, 23, 0.9)', backdropFilter: 'blur(20px)' }} onClick={onClose}>
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 sm:p-6 bg-slate-950/90 backdrop-blur-3xl" onClick={onClose}>
             <motion.div
-                initial={{ scale: 0.9, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }}
-                style={{ position: 'relative', width: '100%', maxWidth: '900px', backgroundColor: '#0f172a', borderRadius: '48px', border: '1px solid rgba(255, 255, 255, 0.1)', overflow: 'hidden', padding: '56px' }}
+                initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                className="relative w-full max-w-4xl bg-slate-900 rounded-[48px] border border-white/10 shadow-2xl p-6 sm:p-12 overflow-y-auto max-h-[90vh]"
                 onClick={e => e.stopPropagation()}
             >
-                <button onClick={onClose} style={{ position: 'absolute', top: '24px', right: '24px', width: '48px', height: '48px', borderRadius: '50%', border: 'none', background: 'rgba(255,255,255,0.05)', color: '#64748b', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{icons.close}</button>
+                <button onClick={onClose} className="absolute top-4 right-4 sm:top-6 sm:right-6 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-white/5 rounded-full hover:bg-white/10 transition-all text-slate-500"> {icons.close} </button>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '48px' }}>
-                    <div style={{ display: 'flex', gap: '40px', alignItems: 'top' }}>
-                        <div style={{ width: '80px', height: '80px', borderRadius: '28px', backgroundColor: 'rgba(99, 102, 241, 0.1)', border: '1px solid rgba(99, 102, 241, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6366f1' }}>{icons.box}</div>
-                        <div style={{ flex: 1 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                                <span style={{ fontSize: '12px', fontWeight: '900', color: '#4f46e5', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Pedido #{details.item.id_pedido.substr(0, 12)}</span>
-                                <div style={{ height: '4px', width: '4px', borderRadius: '50%', backgroundColor: '#334155' }} />
-                                <div style={{
-                                    padding: '4px 12px', borderRadius: '20px', fontSize: '10px', fontWeight: '900', textTransform: 'uppercase',
-                                    backgroundColor: isOnTime ? 'rgba(16, 185, 129, 0.1)' : 'rgba(244, 63, 94, 0.1)',
-                                    color: isOnTime ? '#10b981' : '#f43f5e', border: '1px solid'
-                                }}>
+                <div className="flex flex-col gap-8 sm:gap-12">
+                    <div className="flex flex-col sm:flex-row gap-6 sm:gap-10 items-center sm:items-start text-center sm:text-left">
+                        <div className="w-20 h-20 rounded-[28px] bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-500 shrink-0 uppercase tracking-widest">
+                            {icons.box}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 mb-2">
+                                <span className="text-[10px] font-black text-indigo-500 uppercase tracking-widest break-all">Pedido #{details.item.id_pedido.substr(0, 12)}</span>
+                                <div className="hidden sm:block h-1 w-1 rounded-full bg-slate-700" />
+                                <div className={`
+                                    px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider border
+                                    ${isOnTime ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' : 'bg-rose-500/10 text-rose-500 border-rose-500/20'}
+                                `}>
                                     {isOnTime ? 'No Prazo' : 'Atrasado'}
                                 </div>
                             </div>
-                            <h2 style={{ fontSize: '32px', fontWeight: '900', color: 'white', margin: 0, letterSpacing: '-0.02em' }}>{details.produto?.nome || `Item ${details.item.id_item}`}</h2>
-                            <p style={{ margin: '8px 0 0 0', fontSize: '14px', color: '#64748b' }}>Status: <span style={{ color: '#94a3b8', fontWeight: '700' }}>{details.status_pedido.toUpperCase()}</span></p>
+                            <h2 className="text-2xl sm:text-3xl font-black text-white leading-tight break-words">{details.produto?.nome || `Item ${details.item.id_item}`}</h2>
+                            <p className="mt-2 text-sm text-slate-500">
+                                Status: <span className="text-slate-300 font-bold uppercase tracking-wider">{details.status_pedido}</span>
+                            </p>
                         </div>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
-                        <div style={{ padding: '32px', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: '32px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                            <p style={{ fontSize: '10px', fontWeight: '900', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px' }}>Timeline Logística</p>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                        <div className="p-6 sm:p-8 bg-white/[0.02] rounded-[32px] border border-white/5">
+                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">Timeline Logística</p>
+                            <div className="flex flex-col gap-4">
                                 <div>
-                                    <span style={{ fontSize: '11px', color: '#64748b', display: 'block' }}>Data de Compra</span>
-                                    <span style={{ fontSize: '13px', fontWeight: '700', color: 'white' }}>{formatDate(details.data_compra)}</span>
+                                    <span className="text-[11px] text-slate-500 block mb-1">Data de Compra</span>
+                                    <span className="text-sm font-bold text-white tracking-tight">{formatDate(details.data_compra)}</span>
                                 </div>
-                                <div style={{ width: '1px', height: '20px', backgroundColor: 'rgba(255,255,255,0.05)', marginLeft: '8px' }} />
+                                <div className="w-px h-5 bg-white/5 ml-2" />
                                 <div>
-                                    <span style={{ fontSize: '11px', color: '#64748b', display: 'block' }}>Data de Entrega</span>
-                                    <span style={{ fontSize: '13px', fontWeight: '700', color: 'white' }}>{formatDate(details.data_entrega)}</span>
+                                    <span className="text-[11px] text-slate-500 block mb-1">Data de Entrega</span>
+                                    <span className="text-sm font-bold text-white tracking-tight">{formatDate(details.data_entrega)}</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div style={{ padding: '32px', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: '32px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                            <p style={{ fontSize: '10px', fontWeight: '900', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px' }}>Performance</p>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                    <div style={{ color: '#f59e0b' }}>{icons.clock}</div>
+                        <div className="p-6 sm:p-8 bg-white/[0.02] rounded-[32px] border border-white/5">
+                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">Performance</p>
+                            <div className="flex flex-col gap-6">
+                                <div className="flex items-center gap-4">
+                                    <div className="text-amber-500 bg-amber-500/10 p-2 rounded-lg">{icons.clock}</div>
                                     <div>
-                                        <span style={{ fontSize: '11px', color: '#64748b', display: 'block' }}>Tempo de Entrega</span>
-                                        <span style={{ fontSize: '18px', fontWeight: '900', color: 'white' }}>{details.tempo_entrega_dias?.toFixed(1) || '0.0'} dias</span>
+                                        <span className="text-[11px] text-slate-500 block">Tempo de Entrega</span>
+                                        <span className="text-xl font-black text-white">{details.tempo_entrega_dias?.toFixed(1) || '0.0'} dias</span>
                                     </div>
                                 </div>
-                                <div style={{ height: '1px', backgroundColor: 'rgba(255,255,255,0.05)' }} />
+                                <div className="h-px bg-white/5" />
                                 <div>
-                                    <span style={{ fontSize: '11px', color: '#64748b', display: 'block' }}>Diferença Estimada</span>
-                                    <span style={{
-                                        fontSize: '14px', fontWeight: '700',
-                                        color: (details.diferenca_entrega_dias || 0) <= 0 ? '#10b981' : '#f43f5e'
-                                    }}>
+                                    <span className="text-[11px] text-slate-500 block mb-1">Diferença Estimada</span>
+                                    <span className={`text-sm font-bold ${(details.diferenca_entrega_dias || 0) <= 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
                                         {(details.diferenca_entrega_dias || 0) > 0 ? '+' : ''}
                                         {details.diferenca_entrega_dias?.toFixed(1) || '0.0'} dias
                                     </span>
@@ -95,42 +96,42 @@ export const OrderItemModal = ({ details, onClose }: OrderItemModalProps) => {
                             </div>
                         </div>
 
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                            <div style={{ padding: '24px', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                                    <div style={{ color: '#6366f1' }}>{icons.user}</div>
-                                    <div>
-                                        <span style={{ fontSize: '10px', color: '#475569', fontWeight: '900', textTransform: 'uppercase' }}>Consumidor</span>
-                                        <span style={{ fontSize: '13px', fontWeight: '700', color: 'white', display: 'block' }}>{details.consumidor?.nome}</span>
+                        <div className="flex flex-col gap-4">
+                            <div className="p-5 sm:p-6 bg-white/[0.02] rounded-3xl border border-white/5">
+                                <div className="flex gap-4 items-center">
+                                    <div className="text-indigo-500 bg-indigo-500/10 p-2 rounded-lg">{icons.user}</div>
+                                    <div className="min-w-0">
+                                        <span className="text-[9px] text-slate-600 font-black uppercase tracking-widest">Consumidor</span>
+                                        <span className="text-xs font-bold text-white block truncate">{details.consumidor?.nome}</span>
                                     </div>
                                 </div>
                             </div>
-                            <div style={{ padding: '24px', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                                    <div style={{ color: '#10b981' }}>{icons.store}</div>
-                                    <div>
-                                        <span style={{ fontSize: '10px', color: '#475569', fontWeight: '900', textTransform: 'uppercase' }}>Vendedor</span>
-                                        <span style={{ fontSize: '13px', fontWeight: '700', color: 'white', display: 'block' }}>{details.vendedor?.nome}</span>
+                            <div className="p-5 sm:p-6 bg-white/[0.02] rounded-3xl border border-white/5">
+                                <div className="flex gap-4 items-center">
+                                    <div className="text-emerald-500 bg-emerald-500/10 p-2 rounded-lg">{icons.store}</div>
+                                    <div className="min-w-0">
+                                        <span className="text-[9px] text-slate-600 font-black uppercase tracking-widest">Vendedor</span>
+                                        <span className="text-xs font-bold text-white block truncate">{details.vendedor?.nome}</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '32px 48px', backgroundColor: 'rgba(79, 70, 229, 0.05)', borderRadius: '32px', border: '1px solid rgba(79, 70, 229, 0.1)' }}>
-                        <div style={{ display: 'flex', gap: '48px' }}>
+                    <div className="flex flex-col lg:flex-row gap-6 lg:items-center justify-between p-6 sm:p-8 lg:px-12 bg-indigo-500/5 rounded-[32px] border border-indigo-500/10">
+                        <div className="flex gap-8 sm:gap-12">
                             <div>
-                                <span style={{ fontSize: '10px', color: '#818cf8', fontWeight: '900', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>Valor Item</span>
-                                <span style={{ fontSize: '24px', fontWeight: '900', color: 'white' }}>R$ {details.item.preco_BRL.toFixed(2)}</span>
+                                <span className="text-[9px] text-indigo-400 font-black uppercase tracking-widest block mb-2">Valor Item</span>
+                                <span className="text-xl sm:text-2xl font-black text-white">R$ {details.item.preco_BRL.toFixed(2)}</span>
                             </div>
                             <div>
-                                <span style={{ fontSize: '10px', color: '#818cf8', fontWeight: '900', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>Frete</span>
-                                <span style={{ fontSize: '24px', fontWeight: '900', color: 'white' }}>R$ {details.item.preco_frete.toFixed(2)}</span>
+                                <span className="text-[9px] text-indigo-400 font-black uppercase tracking-widest block mb-2">Frete</span>
+                                <span className="text-xl sm:text-2xl font-black text-white">R$ {details.item.preco_frete.toFixed(2)}</span>
                             </div>
                         </div>
-                        <div style={{ textAlign: 'right' }}>
-                            <span style={{ fontSize: '10px', color: '#818cf8', fontWeight: '900', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>Total Repassado</span>
-                            <span style={{ fontSize: '32px', fontWeight: '900', color: '#10b981' }}>R$ {(details.item.preco_BRL + details.item.preco_frete).toFixed(2)}</span>
+                        <div className="lg:text-right border-t lg:border-t-0 border-white/5 pt-4 lg:pt-0">
+                            <span className="text-[9px] text-indigo-400 font-black uppercase tracking-widest block mb-1">Total Repassado</span>
+                            <span className="text-3xl sm:text-4xl font-black text-emerald-500">R$ {(details.item.preco_BRL + details.item.preco_frete).toFixed(2)}</span>
                         </div>
                     </div>
                 </div>

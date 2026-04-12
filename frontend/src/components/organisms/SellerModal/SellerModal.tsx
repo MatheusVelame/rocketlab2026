@@ -17,46 +17,42 @@ export const SellerModal = ({ seller, onClose }: SellerModalProps) => {
     };
 
     return (
-        <div style={{
-            position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', backgroundColor: 'rgba(2, 6, 23, 0.9)', backdropFilter: 'blur(40px)'
-        }} onClick={onClose}>
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 sm:p-6 bg-slate-950/90 backdrop-blur-3xl" onClick={onClose}>
             <motion.div
                 initial={{ scale: 0.9, y: 50, opacity: 0 }}
                 animate={{ scale: 1, y: 0, opacity: 1 }}
-                style={{
-                    position: 'relative', width: '100%', maxWidth: '600px', backgroundColor: '#0f172a', borderRadius: '48px', border: '1px solid rgba(255, 255, 255, 0.1)', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)', padding: '48px'
-                }}
+                className="relative w-full max-w-xl bg-slate-900 rounded-[48px] border border-white/10 shadow-2xl p-6 sm:p-12 overflow-y-auto max-h-[90vh]"
                 onClick={e => e.stopPropagation()}
             >
-                <button onClick={onClose} style={{ position: 'absolute', top: '24px', right: '24px', width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '9999px', border: 'none', cursor: 'pointer', color: '#64748b' }}> {icons.close} </button>
+                <button onClick={onClose} className="absolute top-4 right-4 sm:top-6 sm:right-6 w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-white/5 rounded-full hover:bg-white/10 transition-all text-slate-500"> {icons.close} </button>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', alignItems: 'center', textAlign: 'center' }}>
-                    <div style={{ width: '100px', height: '100px', borderRadius: '40px', backgroundColor: 'rgba(129, 140, 248, 0.1)', color: '#818cf8', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(129, 140, 248, 0.2)' }}>
+                <div className="flex flex-col gap-6 sm:gap-8 items-center text-center">
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-[32px] sm:rounded-[40px] bg-indigo-500/10 text-indigo-400 flex items-center justify-center border border-indigo-500/20">
                         {icons.store}
                     </div>
 
-                    <div>
-                        <h2 style={{ fontSize: '32px', fontWeight: '900', color: 'white', fontStyle: 'italic', letterSpacing: '-0.05em', margin: '0 0 8px 0', textTransform: 'uppercase' }}>{seller.nome_vendedor}</h2>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: '#475569', fontSize: '11px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                    <div className="max-w-full overflow-hidden">
+                        <h2 className="text-xl sm:text-3xl font-black text-white italic tracking-tighter uppercase mb-2 line-clamp-2">{seller.nome_vendedor}</h2>
+                        <div className="flex items-center justify-center gap-2 text-slate-500 text-[10px] font-black uppercase tracking-widest break-all">
                             {icons.hash} {seller.id_vendedor}
                         </div>
                     </div>
 
-                    <div style={{ width: '100%', display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px', marginTop: '16px' }}>
-                        <div style={{ backgroundColor: 'rgba(2, 6, 23, 0.4)', padding: '24px', borderRadius: '32px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                            <p style={{ fontSize: '10px', fontWeight: '900', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px', margin: 0 }}>Cidade</p>
-                            <h4 style={{ fontSize: '16px', fontWeight: '800', color: 'white', margin: 0 }}>{seller.cidade}</h4>
+                    <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 mt-4">
+                        <div className="bg-slate-950/40 p-5 sm:p-6 rounded-3xl border border-white/5">
+                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Cidade</p>
+                            <h4 className="text-sm sm:text-lg font-extrabold text-white">{seller.cidade}</h4>
                         </div>
-                        <div style={{ backgroundColor: 'rgba(2, 6, 23, 0.4)', padding: '24px', borderRadius: '32px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                            <p style={{ fontSize: '10px', fontWeight: '900', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px', margin: 0 }}>Estado</p>
-                            <h4 style={{ fontSize: '16px', fontWeight: '800', color: 'white', margin: 0 }}>{seller.estado}</h4>
+                        <div className="bg-slate-950/40 p-5 sm:p-6 rounded-3xl border border-white/5">
+                            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Estado</p>
+                            <h4 className="text-sm sm:text-lg font-extrabold text-white">{seller.estado}</h4>
                         </div>
-                        <div style={{ gridColumn: 'span 2', backgroundColor: 'rgba(129, 140, 248, 0.05)', padding: '24px', borderRadius: '32px', border: '1px solid rgba(129, 140, 248, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div className="sm:col-span-2 bg-indigo-500/5 p-5 sm:p-6 rounded-3xl border border-indigo-500/10 flex items-center justify-between">
                             <div>
-                                <p style={{ fontSize: '10px', fontWeight: '900', color: '#818cf8', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px', margin: 0 }}>Prefixo CEP</p>
-                                <h4 style={{ fontSize: '20px', fontWeight: '900', color: 'white', margin: 0 }}>{seller.prefixo_cep}</h4>
+                                <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Prefixo CEP</p>
+                                <h4 className="text-xl sm:text-2xl font-black text-white">{seller.prefixo_cep}</h4>
                             </div>
-                            <div style={{ color: '#818cf8' }}>{icons.map}</div>
+                            <div className="text-indigo-500">{icons.map}</div>
                         </div>
                     </div>
                 </div>

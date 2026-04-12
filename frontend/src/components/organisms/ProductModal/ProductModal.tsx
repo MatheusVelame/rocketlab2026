@@ -89,19 +89,18 @@ export const ProductModal = ({
             <motion.div
                 initial={{ scale: 0.9, y: 50, opacity: 0 }}
                 animate={{ scale: 1, y: 0, opacity: 1 }}
-                style={{
-                    position: 'relative', width: '100%', maxWidth: '1100px', maxHeight: '92vh', backgroundColor: '#0f172a', borderRadius: '56px', border: '1px solid rgba(255, 255, 255, 0.1)', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)', padding: '56px', overflowY: 'auto'
-                }}
-                className="scrollbar-hide"
+                className="relative w-full max-w-[1100px] max-h-[92vh] bg-[#0f172a] rounded-[40px] sm:rounded-[56px] border border-white/10 shadow-2xl p-6 sm:p-14 overflow-y-auto scrollbar-hide"
                 onClick={e => e.stopPropagation()}
             >
                 <button onClick={onClose} style={{ position: 'absolute', top: '24px', right: '24px', width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '9999px', border: 'none', cursor: 'pointer', color: '#64748b' }}> {icons.close} </button>
 
                 {(isEditing || isCreating) ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
-                        <h2 style={{ fontSize: '30px', fontWeight: '900', fontStyle: 'italic', letterSpacing: '-0.05em' }}>{isCreating ? 'Novo Produto' : 'Editando Produto'}</h2>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '32px', backgroundColor: 'rgba(0,0,0,0.4)', padding: '48px', borderRadius: '48px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                            <div style={{ gridColumn: 'span 2' }}>
+                        <h2 className="text-2xl sm:text-3xl font-black italic tracking-tighter">
+                            {isCreating ? 'Novo Produto' : 'Editando Produto'}
+                        </h2>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 bg-black/40 p-6 sm:p-12 rounded-[32px] sm:rounded-[48px] border border-white/5">
+                            <div className="sm:col-span-2">
                                 {renderField('Nome Comercial do Produto', 'nome_produto')}
                             </div>
 
@@ -148,22 +147,22 @@ export const ProductModal = ({
 
                             {renderField('Peso (gramas)', 'peso_produto_gramas', 'number')}
 
-                            <div style={{ gridColumn: 'span 2', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '32px' }}>
+                            <div className="sm:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4 border-t border-white/5 pt-8">
                                 {renderField('Comprimento (cm)', 'comprimento_centimetros', 'number')}
                                 {renderField('Altura (cm)', 'altura_centimetros', 'number')}
                                 {renderField('Largura (cm)', 'largura_centimetros', 'number')}
                             </div>
 
-                            <div style={{ gridColumn: 'span 2', display: 'flex', gap: '16px', marginTop: '16px' }}>
+                            <div className="sm:col-span-2 flex flex-col sm:flex-row gap-4 mt-4">
                                 <button
                                     onClick={onClose}
-                                    style={{ flex: 1, backgroundColor: 'rgba(255,255,255,0.05)', color: '#94a3b8', fontWeight: '900', padding: '24px', borderRadius: '24px', fontSize: '14px', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.1em', transition: 'all 0.3s' }}
+                                    className="flex-1 bg-white/5 text-slate-400 font-black p-4 sm:p-6 rounded-[24px] text-sm border border-white/10 cursor-pointer uppercase tracking-widest transition-all"
                                 >
                                     Cancelar
                                 </button>
                                 <button
                                     onClick={onSave}
-                                    style={{ flex: 2, backgroundColor: '#4f46e5', color: 'white', fontWeight: '900', padding: '24px', borderRadius: '24px', fontSize: '14px', border: 'none', cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.1em', boxShadow: '0 10px 15px -3px rgba(79, 70, 229, 0.3)', transition: 'all 0.3s' }}
+                                    className="flex-[2] bg-indigo-600 text-white font-black p-4 sm:p-6 rounded-[24px] text-sm border-none cursor-pointer uppercase tracking-widest shadow-xl shadow-indigo-600/30 transition-all"
                                 >
                                     Sincronizar Produto na Base
                                 </button>
@@ -171,8 +170,8 @@ export const ProductModal = ({
                         </div>
                     </div>
                 ) : product && (
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: '48px' }}>
-                        <div style={{ gridColumn: 'span 4', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 pt-6">
+                        <div className="lg:col-span-4 flex flex-col gap-8">
                             <div style={{ aspectRatio: '1/1', borderRadius: '56px', overflow: 'hidden', backgroundColor: '#020617', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}>
                                 <img src={product.url_imagem} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                             </div>
@@ -199,35 +198,35 @@ export const ProductModal = ({
                                 </div>
                             )}
                         </div>
-                        <div style={{ gridColumn: 'span 8', display: 'flex', flexDirection: 'column', gap: '40px', paddingTop: '24px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <div className="lg:col-span-8 flex flex-col gap-10">
+                            <div className="flex flex-col sm:flex-row justify-between items-start gap-6">
                                 <div>
-                                    <h2 style={{ fontSize: '40px', fontWeight: '900', color: 'white', fontStyle: 'italic', letterSpacing: '-0.05em', margin: '0 0 16px 0' }}>{product.nome_produto}</h2>
-                                    <span style={{ backgroundColor: '#4f46e5', padding: '4px 16px', borderRadius: '9999px', fontSize: '10px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'white' }}>{product.categoria_produto.replace(/_/g, ' ')}</span>
+                                    <h2 className="text-3xl sm:text-4xl font-black text-white italic tracking-tighter mb-4">{product.nome_produto}</h2>
+                                    <span className="bg-indigo-600 px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-white">{product.categoria_produto.replace(/_/g, ' ')}</span>
                                 </div>
-                                <div style={{ display: 'flex', gap: '8px', paddingRight: '48px' }}>
-                                    <button onClick={onEdit} style={{ width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '16px', border: 'none', cursor: 'pointer', color: '#94a3b8' }}> {icons.edit} </button>
-                                    <button onClick={() => onDelete(product.id_produto)} style={{ width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(244,63,94,0.1)', borderRadius: '16px', border: '1px solid rgba(244,63,94,0.2)', cursor: 'pointer', color: '#f43f5e' }}> {icons.delete} </button>
+                                <div className="flex gap-2">
+                                    <button onClick={onEdit} className="w-12 h-12 flex items-center justify-center bg-white/5 rounded-2xl border-none cursor-pointer text-slate-400 hover:text-white transition-colors"> {icons.edit} </button>
+                                    <button onClick={() => onDelete(product.id_produto)} className="w-12 h-12 flex items-center justify-center bg-rose-500/10 rounded-2xl border border-rose-500/20 cursor-pointer text-rose-500 hover:bg-rose-500/20 transition-all"> {icons.delete} </button>
                                 </div>
                             </div>
-                            <div style={{ gridColumn: 'span 8', display: 'flex', flexDirection: 'column', gap: '32px' }}>
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+                            <div className="flex flex-col gap-8">
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                                     {[
                                         { l: 'Vendas Totais', v: analytics?.performance.total_vendas, i: icons.sales, c: '#818cf8', raw: true },
                                         { l: 'Preço Médio', v: analytics?.performance.preco_medio ? `R$ ${Math.round(analytics.performance.preco_medio).toLocaleString()}` : null, i: icons.trending, c: '#10b981' },
                                         { l: 'Nota Média', v: analytics?.performance.avaliacao_media ? analytics.performance.avaliacao_media.toFixed(1) : null, i: icons.star, c: '#f59e0b' },
                                         { l: 'Peso (g)', v: `${product.peso_produto_gramas}`, i: icons.box, c: '#c084fc' },
                                     ].map((s, i) => (
-                                        <div key={i} style={{ backgroundColor: 'rgba(2, 6, 23, 0.6)', padding: '20px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.05)', textAlign: 'center' }}>
-                                            <div style={{ color: s.c, marginBottom: '8px', display: 'flex', justifyContent: 'center' }}>{s.i}</div>
-                                            <p style={{ fontSize: '9px', fontWeight: '900', color: '#64748b', textTransform: 'uppercase', marginBottom: '4px', margin: 0 }}>{s.l}</p>
-                                            <h4 style={{ fontSize: '18px', fontWeight: '900', color: 'white', margin: 0 }}>
+                                        <div key={i} className="bg-black/40 p-5 rounded-3xl border border-white/5 text-center">
+                                            <div style={{ color: s.c }} className="mb-2 flex justify-center">{s.i}</div>
+                                            <p className="text-[9px] font-black text-slate-500 uppercase mb-1">{s.l}</p>
+                                            <h4 className="text-lg font-black text-white m-0">
                                                 {s.v !== undefined && s.v !== null ? s.v : <Skeleton width="100%" height="22px" />}
                                             </h4>
                                         </div>
                                     ))}
                                 </div>
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '32px' }}>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                                         <div style={{ backgroundColor: 'rgba(2, 6, 23, 0.3)', borderRadius: '40px', border: '1px solid rgba(255,255,255,0.05)', padding: '32px', position: 'relative' }}>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '10px', fontWeight: '900', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '24px' }}> {icons.ruler} Logística </div>
