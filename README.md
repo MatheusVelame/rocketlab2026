@@ -31,8 +31,11 @@ Entre na pasta do backend e prepare o ambiente virtual:
 ```bash
 cd backend
 python -m venv venv
+
 source venv/bin/activate # No Linux
+ou
 venv\Scripts\activate # No Windows
+
 pip install -r requirements.txt
 ```
 
@@ -108,21 +111,6 @@ Detalhamento de cada item transacionado na plataforma.
 
 ### 🏥 Sistema (Health)
 *   `GET /`: Verifica se os serviços da API estão operacionais.
-
----
-
-## ✨ Funcionalidades em Destaque
-
-### 📈 Smart Inventory Analytics
-Diferente de um simples CRUD, o RocketStore analisa o comportamento de cada item. Ao selecionar um produto, o sistema calcula automaticamente a **Popularidade**, o **Giro de Vendas** e a **Aprovação dos Clientes** com base em dados transacionais reais.
-
-### 🛡️ Validação Rigorosa de Dados
-Nenhum dado entra "sujo" no sistema. Implementamos verificações via **Pydantic** no Backend e validações dinâmicas no Frontend para garantir que campos obrigatórios (nome, categoria, peso e dimensões) sejam sempre válidos e positivos.
-
-### 🌓 Design & UX Premium
-*   **Responsive Sidebar:** Navegação inteligente adaptada para qualquer tamanho de tela.
-*   **Framer Motion:** Micro-interações e animações suaves que dão vida à interface.
-*   **Atomic Design:** Código organizado e modular para facilidade de manutenção.
 
 ---
 
