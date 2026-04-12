@@ -30,9 +30,29 @@ source venv/bin/activate
 
 **2. Instale as dependências**
 
-```bash
-pip install -r requirements.txt
-```
+### 🏗️ Setup do Backend
+
+1. **Venv & Dependências**:
+   ```bash
+   cd backend
+   python3 -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   ```
+
+2. **Banco de Dados (SQLite)**:
+   > [!NOTE]
+   > O projeto utiliza SQLite com suporte a **Alembic Batch Mode** para garantir compatibilidade total com as migrações.
+   
+   Execute as migrações para criar as tabelas:
+   ```bash
+   alembic upgrade head
+   ```
+
+3. **Alimentar o Banco (Opcional)**:
+   ```bash
+   python seed.py
+   ```
 
 **3. Configure as variáveis de ambiente**
 
