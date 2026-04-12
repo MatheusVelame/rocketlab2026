@@ -20,7 +20,7 @@ Siga os passos abaixo para subir o ambiente completo localmente.
 ### 📋 Pré-requisitos
 *   **Python 3.11+**
 *   **Node.js 18+**
-*   **pnpm** (recomendado) ou npm/yarn.
+*   **pnpm**
 
 ---
 
