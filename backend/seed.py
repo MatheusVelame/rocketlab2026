@@ -9,11 +9,9 @@ def parse_date(date_str):
     if pd.isna(date_str) or date_str == "" or date_str == "Sem comentário":
         return None
     try:
-        # Tenta formato completo com hora
         return datetime.strptime(str(date_str), '%Y-%m-%d %H:%M:%S')
     except ValueError:
         try:
-            # Tenta formato apenas data
             return datetime.strptime(str(date_str), '%Y-%m-%d')
         except ValueError:
             return None
@@ -25,7 +23,6 @@ def seed_database():
     print("Iniciando a população do banco de dados...")
 
     try:
-        # 0. Popula Categorias de Imagens
         print("Populando Categorias de Imagens...")
         df_img = pd.read_csv("data/dim_categoria_imagens.csv")
         for _, row in df_img.iterrows():
@@ -35,7 +32,6 @@ def seed_database():
             ))
         db.commit()
 
-        # 1. Popula Consumidores
         print("Populando Consumidores...")
         df_cons = pd.read_csv("data/dim_consumidores.csv")
         for _, row in df_cons.iterrows():
@@ -47,7 +43,6 @@ def seed_database():
                 estado=row['estado']
             ))
 
-        # 2. Popula Vendedores
         print("Populando Vendedores...")
         df_vend = pd.read_csv("data/dim_vendedores.csv")
         for _, row in df_vend.iterrows():
@@ -59,7 +54,6 @@ def seed_database():
                 estado=row['estado']
             ))
 
-        # 3. Popula Produtos (COM CORREÇÃO PARA NULOS)
         print("Populando Produtos...")
         df_prod = pd.read_csv("data/dim_produtos.csv")
         # Preenche categorias vazias para evitar erro de NOT NULL constraint
@@ -76,7 +70,6 @@ def seed_database():
                 largura_centimetros=None if pd.isna(row['largura_centimetros']) else float(row['largura_centimetros'])
             ))
 
-        # 4. Popula Pedidos
         print("Populando Pedidos...")
         df_ped = pd.read_csv("data/fat_pedidos.csv")
         for _, row in df_ped.iterrows():
@@ -93,10 +86,8 @@ def seed_database():
                 entrega_no_prazo=row['entrega_no_prazo']
             ))
 
-        # Commit necessário antes de inserir itens e avaliações devido às chaves estrangeiras
         db.commit()
 
-        # 5. Popula Itens dos Pedidos
         print("Populando Itens dos Pedidos...")
         df_itens = pd.read_csv("data/fat_itens_pedidos.csv")
         for _, row in df_itens.iterrows():
@@ -109,11 +100,9 @@ def seed_database():
                 preco_frete=float(row['preco_frete'])
             ))
 
-        # 6. Popula Avaliações
         print("Populando Avaliações...")
         df_aval = pd.read_csv("data/fat_avaliacoes_pedidos.csv")
         
-        # Remove duplicatas baseadas no ID da avaliação antes de inserir
         df_aval = df_aval.drop_duplicates(subset=['id_avaliacao'])
         
         for _, row in df_aval.iterrows():

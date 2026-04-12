@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Path
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from typing import List, Optional
@@ -13,13 +13,19 @@ from app.schemas.stats import GlobalStats
 
 router = APIRouter(prefix="/produtos", tags=["Produtos"])
 
-@router.get("/stats/global", response_model=GlobalStats)
+@router.get("/stats/global", response_model=GlobalStats, summary="Obter KPIs globais do e-commerce")
 def get_global_stats(db: Session = Depends(get_db)):
+    """
+    Retorna estatísticas agregadas de alto nível, incluindo:
+    * **Receita Total**
+    * **Volume de Vendas**
+    * **Ticket Médio**
+    * **Categoria mais popular**
+    """
     total_receita = db.query(func.sum(ItemPedidoModel.preco_BRL)).scalar() or 0.0
     total_vendas = db.query(func.count(ItemPedidoModel.id_item)).scalar() or 0
     total_produtos = db.query(func.count(ProdutoModel.id_produto)).scalar() or 0
     
-    # Top Categoria (mais vendida)
     top_cat_row = db.query(
         ProdutoModel.categoria_produto,
         func.count(ItemPedidoModel.id_item).label("vendas")
@@ -40,20 +46,29 @@ def get_global_stats(db: Session = Depends(get_db)):
         top_categoria=top_categoria
     )
 
-@router.get("/categorias", response_model=List[str])
+@router.get("/categorias", response_model=List[str], summary="Listar todas as categorias disponíveis")
 def list_categorias(db: Session = Depends(get_db)):
+    """
+    Retorna uma lista única de todas as categorias de produtos presentes no banco de dados.
+    """
     return [c[0] for c in db.query(ProdutoModel.categoria_produto).distinct().all()]
 
 from app.schemas.paginated import PaginatedProdutos
 
-@router.get("/", response_model=PaginatedProdutos)
+@router.get("/", response_model=PaginatedProdutos, summary="Listar produtos com paginação e busca")
 def list_produtos(
-    skip: int = 0, 
-    limit: int = 20, 
-    q: Optional[str] = None,
-    categoria: Optional[str] = None,
+    skip: int = Query(0, description="Número de itens para pular (offset)"), 
+    limit: int = Query(20, description="Quantidade máxima de itens por página"), 
+    q: Optional[str] = Query(None, description="Busca por nome do produto (busca parcial)"),
+    categoria: Optional[str] = Query(None, description="Filtro exato por categoria"),
     db: Session = Depends(get_db)
 ):
+    """
+    Lista os produtos cadastrados com suporte a:
+    * **Busca textual** via parâmetro `q`.
+    * **Filtragem por categoria**.
+    * **Paginação eficiente** usando `skip` e `limit`.
+    """
     query = db.query(ProdutoModel)
     if q:
         query = query.filter(ProdutoModel.nome_produto.contains(q))
@@ -71,15 +86,26 @@ def list_produtos(
         pages=(total + limit - 1) // limit
     )
 
-@router.get("/{id_produto}", response_model=Produto)
-def get_produto(id_produto: str, db: Session = Depends(get_db)):
+@router.get("/{id_produto}", response_model=Produto, summary="Obter detalhes de um produto específico")
+def get_produto(
+    id_produto: str = Path(..., description="ID único do produto (ex: c777355d18b72b67da6d2a9628a99c71)"), 
+    db: Session = Depends(get_db)
+):
     db_produto = db.query(ProdutoModel).filter(ProdutoModel.id_produto == id_produto).first()
     if not db_produto:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
     return db_produto
 
-@router.patch("/{id_produto}", response_model=Produto)
-def update_produto(id_produto: str, produto_update: ProdutoUpdate, db: Session = Depends(get_db)):
+@router.patch("/{id_produto}", response_model=Produto, summary="Atualizar informações de um produto")
+def update_produto(
+    id_produto: str = Path(..., description="ID do produto a ser editado"), 
+    produto_update: ProdutoUpdate = None, 
+    db: Session = Depends(get_db)
+):
+    """
+    Atualiza campos parciais de um produto. 
+    Ex: Alterar apenas o nome ou apenas a categoria.
+    """
     db_produto = db.query(ProdutoModel).filter(ProdutoModel.id_produto == id_produto).first()
     if not db_produto:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
@@ -92,8 +118,11 @@ def update_produto(id_produto: str, produto_update: ProdutoUpdate, db: Session =
     db.refresh(db_produto)
     return db_produto
 
-@router.post("/", response_model=Produto, status_code=201)
+@router.post("/", response_model=Produto, status_code=201, summary="Cadastrar um novo produto")
 def create_produto(produto: Produto, db: Session = Depends(get_db)):
+    """
+    Cria um novo registro de produto no catálogo.
+    """
     db_exists = db.query(ProdutoModel).filter(ProdutoModel.id_produto == produto.id_produto).first()
     if db_exists:
         raise HTTPException(status_code=400, detail="ID de produto já cadastrado")
@@ -104,8 +133,11 @@ def create_produto(produto: Produto, db: Session = Depends(get_db)):
     db.refresh(new_product)
     return new_product
 
-@router.delete("/{id_produto}", status_code=204)
-def delete_produto(id_produto: str, db: Session = Depends(get_db)):
+@router.delete("/{id_produto}", status_code=204, summary="Remover um produto do sistema")
+def delete_produto(
+    id_produto: str = Path(..., description="ID do produto a ser excluído"), 
+    db: Session = Depends(get_db)
+):
     db_produto = db.query(ProdutoModel).filter(ProdutoModel.id_produto == id_produto).first()
     if not db_produto:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
@@ -114,20 +146,27 @@ def delete_produto(id_produto: str, db: Session = Depends(get_db)):
     db.commit()
     return None
 
-@router.get("/{id_produto}/analytics", response_model=ProductAnalytics)
-def get_produto_analytics(id_produto: str, db: Session = Depends(get_db)):
+@router.get("/{id_produto}/analytics", response_model=ProductAnalytics, summary="Obter performance detalhada do produto")
+def get_produto_analytics(
+    id_produto: str = Path(..., description="ID do produto para análise de vendas"), 
+    db: Session = Depends(get_db)
+):
+    """
+    Retorna métricas de performance específicas de um produto:
+    * **Histórico de vendas** (total e receita).
+    * **Avaliação média** dos consumidores.
+    * **Últimos comentários** recebidos.
+    """
     db_produto = db.query(ProdutoModel).filter(ProdutoModel.id_produto == id_produto).first()
     if not db_produto:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
 
-    # Vendas e Receita
     sales_data = db.query(
         func.count(ItemPedidoModel.id_item).label("total_vendas"),
         func.sum(ItemPedidoModel.preco_BRL).label("receita_total"),
         func.avg(ItemPedidoModel.preco_BRL).label("preco_medio")
     ).filter(ItemPedidoModel.id_produto == id_produto).first()
 
-    # Avaliações
     reviews_data = db.query(
         func.avg(AvaliacaoPedidoModel.avaliacao).label("avaliacao_media"),
         func.count(AvaliacaoPedidoModel.id_avaliacao).label("total_avaliacoes")
@@ -143,7 +182,6 @@ def get_produto_analytics(id_produto: str, db: Session = Depends(get_db)):
         total_avaliacoes=reviews_data.total_avaliacoes or 0
     )
 
-    # Últimas 5 avaliações
     last_reviews = db.query(AvaliacaoPedidoModel).join(
         ItemPedidoModel, ItemPedidoModel.id_pedido == AvaliacaoPedidoModel.id_pedido
     ).filter(

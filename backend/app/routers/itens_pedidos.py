@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Path
 from sqlalchemy.orm import Session
 from sqlalchemy import func, or_
 from typing import List, Optional
@@ -15,16 +15,22 @@ from app.schemas.item_pedido import ItemPedido, ItemPedidoDetalhado
 
 router = APIRouter(prefix="/itens-pedidos", tags=["Itens Pedidos"])
 
-@router.get("/", response_model=PaginatedResponse[ItemPedido])
+@router.get("/", response_model=PaginatedResponse[ItemPedido], summary="Listar itens vendidos com filtros avançados")
 def list_itens_pedidos(
-    skip: int = 0, 
-    limit: int = 20, 
-    q: Optional[str] = Query(None),
-    status: Optional[str] = Query(None),
-    data_inicio: Optional[str] = Query(None),
-    data_fim: Optional[str] = Query(None),
+    skip: int = Query(0, description="Número de itens para pular"), 
+    limit: int = Query(20, description="Quantidade de itens por página"), 
+    q: Optional[str] = Query(None, description="Busca por ID do Pedido ou Nome do Produto"),
+    status: Optional[str] = Query(None, description="Filtro de status (ex: entregue, shipped, processando)"),
+    data_inicio: Optional[str] = Query(None, description="Data inicial do período (ISO: 2024-01-01)"),
+    data_fim: Optional[str] = Query(None, description="Data final do período (ISO: 2024-12-31)"),
     db: Session = Depends(get_db)
 ):
+    """
+    Retorna uma listagem detalhada de itens individuais vendidos.
+    
+    O filtro de **status** é bilíngue (aceita 'entregue' ou 'delivered').
+    A busca em **q** verifica tanto o código do pedido quanto o nome do produto.
+    """
     query = db.query(
         ItemPedidoModel,
         ProdutoModel.nome_produto,
@@ -35,14 +41,12 @@ def list_itens_pedidos(
         PedidoModel, ItemPedidoModel.id_pedido == PedidoModel.id_pedido
     )
     
-    # Busca inteligente: ID do pedido ou Nome do produto
     if q and q.strip():
         query = query.filter(or_(
             ItemPedidoModel.id_pedido.contains(q),
             ProdutoModel.nome_produto.contains(q)
         ))
     
-    # Filtro por Status Inteligente (Mapeia EN/PT)
     if status and status.strip():
         s = status.lower()
         if s == 'entregue' or s == 'delivered':
@@ -56,7 +60,6 @@ def list_itens_pedidos(
         else:
             query = query.filter(PedidoModel.status.ilike(f'%{status}%'))
         
-    # Filtro por Intervalo de Datas
     try:
         if data_inicio and data_inicio.strip():
             d_ini = date.fromisoformat(data_inicio)
@@ -91,8 +94,18 @@ def list_itens_pedidos(
         pages=(total + limit - 1) // limit
     )
 
-@router.get("/{id_pedido}/{id_item}/detalhes", response_model=ItemPedidoDetalhado)
-def get_item_detalhes(id_pedido: str, id_item: int, db: Session = Depends(get_db)):
+@router.get("/{id_pedido}/{id_item}/detalhes", response_model=ItemPedidoDetalhado, summary="Obter detalhes transacionais de um item")
+def get_item_detalhes(
+    id_pedido: str = Path(..., description="ID do pedido (ex: 00010242fe8c4161c2010c71c63D9503)"), 
+    id_item: int = Path(..., description="Número sequencial do item dentro do pedido"), 
+    db: Session = Depends(get_db)
+):
+    """
+    Fornece uma visão 360º de um item vendido, incluindo:
+    * Dados do **Consumidor** (localização e nome).
+    * Dados do **Vendedor**.
+    * Informações de **Logística** (prazo de entrega, dias corridos).
+    """
     db_item = db.query(ItemPedidoModel).filter(
         ItemPedidoModel.id_pedido == id_pedido,
         ItemPedidoModel.id_item == id_item

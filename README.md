@@ -1,78 +1,124 @@
-# RocketStore - Sistema de Gerenciamento de E-Commerce
+# 🚀 RocketStore - Intelligence E-Commerce Dashboard  
 
-Este é um sistema completo de gerenciamento para gerentes de e-commerce, permitindo a visualização da lista de produtos, análise de desempenho de vendas, avaliações dos consumidores e modificação de informações dos produtos.
+Bem-vindo ao **RocketStore**, uma plataforma de gerenciamento de e-commerce de alta performance, projetada para fornecer insights profundos sobre inventário e vendas. Este projeto utiliza o que há de mais moderno em desenvolvimento web para entregar uma experiência fluida, rápida e visualmente impactante.
 
-## 🛠️ Stack Tecnológica
+---
 
-- **Frontend**: Vite + React + TypeScript + Framer Motion + Lucide React
-- **Backend**: FastAPI (Python) + SQLAlchemy 2.0
-- **Banco de Dados**: SQLite
-- **Gerenciador de Pacotes**: pnpm (Frontend) / pip (Backend)
+## 🏛️ Arquitetura do Projeto
+
+O sistema é dividido em duas frentes principais, seguindo padrões de mercado para escalabilidade:
+
+1.  **Backend (FastAPI + SQLAlchemy):** Uma API RESTful robusta e tipada que gerencia o processamento de dados e a comunicação com o banco de dados SQLite.
+2.  **Frontend (React + TypeScript):** Uma interface dinâmica construída com os princípios de **Atomic Design**, garantindo componentes reutilizáveis e uma interface de usuário consistente e premium.
 
 ---
 
 ## 🚀 Como Executar o Projeto
 
-### 1. Requisitos Prévios
-- Node.js e **pnpm** instalados.
-- Python 3.11+ instalado.
+Siga os passos abaixo para subir o ambiente completo localmente.
 
-### 2. Configuração do Backend
-Entre na pasta `backend`:
-```bash
-cd backend
-```
-
-Crie um ambiente virtual e instale as dependências:
-```bash
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# ou venv\Scripts\activate no Windows
-
-pip install -r requirements.txt
-```
-
-Configure o banco de dados e as migrações:
-```bash
-# Aplica as migrações
-alembic upgrade head
-
-# Popula o banco com dados iniciais (CSV)
-python seed.py
-```
-
-Inicie o servidor da API:
-```bash
-python -m app.main
-```
-A API estará em: [http://localhost:8000](http://localhost:8000)
-Documentação Swagger: [http://localhost:8000/docs](http://localhost:8000/docs)
-
-### 3. Configuração do Frontend
-Em um novo terminal, entre na pasta `frontend`:
-```bash
-cd frontend
-```
-
-Instale as dependências com **pnpm**:
-```bash
-pnpm install
-```
-
-Inicie o servidor de desenvolvimento:
-```bash
-pnpm dev
-```
-O frontend estará em: [http://localhost:5173](http://localhost:5173)
+### 📋 Pré-requisitos
+*   **Python 3.11+**
+*   **Node.js 18+**
+*   **pnpm** (recomendado) ou npm/yarn.
 
 ---
 
-## ✨ Funcionalidades Principais
-- **Listagem de Produtos**: Visualização rápida de todos os produtos do inventário.
-- **Busca em Tempo Real**: Filtro instantâneo por nome de produto.
-- **Analytics de Desempenho**: Ao clicar em um produto, veja o total de vendas, receita gerada e avaliação média.
-- **Edição de Informações**: Modifique nome e categoria dos produtos diretamente no painel.
-- **Design Premium**: Interface responsiva e animada com modo escuro nativo.
+### 🔧 1. Configurando o Backend (API)
 
-## 📝 Documentação Interativa (Swagger)
-A API utiliza o FastAPI para gerar documentação automática. Ao rodar o backend, acesse `/docs` para testar todos os endpoints interativamente.
+Entre na pasta do backend e prepare o ambiente virtual:
+
+```bash
+cd backend
+python -m venv venv
+source venv/bin/activate  # No Windows: venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+**Banco de Dados e Migrações:**
+O projeto utiliza **Alembic** para versionamento do banco e scripts de **Seed** para popular dados reais a partir de bases CSV.
+
+```bash
+# Sincroniza a estrutura do banco
+alembic upgrade head
+
+# Popula o banco com dados de exemplo (Categorias, Produtos, Pedidos e Avaliações)
+python seed.py
+```
+
+**Iniciando o Servidor:**
+```bash
+python -m app.main
+```
+> Acesse a documentação técnica em: [http://localhost:8000/docs](http://localhost:8000/docs)
+
+---
+
+### 🎨 2. Configurando o Frontend
+
+Em um novo terminal, entre na pasta do frontend e instale as dependências:
+
+```bash
+cd frontend
+pnpm install
+```
+
+**Iniciando o Dashboad:**
+```bash
+pnpm dev
+```
+> Acesse a plataforma em: [http://localhost:5173](http://localhost:5173)
+
+---
+
+## 📡 Guia da API (FastAPI)
+
+A API do RocketStore foi desenhada seguindo as melhores práticas REST. Abaixo, uma explicação dos métodos utilizados:
+
+### 🔍 GET (Busca e Listagem)
+*   **Finalidade:** Consultar informações existentes.
+*   **Endpoints Principais:**
+    *   `GET /`: Health Check para verificar se a API está online.
+    *   `GET /produtos/`: Lista o catálogo com suporte a **Busca Textual** e **Paginação**.
+    *   `GET /produtos/categorias`: Retorna todas as categorias únicas cadastradas para filtros no frontend.
+    *   `GET /dashboard/`: Retorna KPIs globais (Receita total, histórico de 6 meses, etc).
+    *   `GET /produtos/{id}/analytics`: Fornece uma análise 360º de um item específico.
+
+### ➕ POST (Criação)
+*   **Finalidade:** Registrar novos dados no sistema.
+*   **Endpoint Principal:**
+    *   `POST /produtos/`: Cadastra um novo produto. Requer validação de todos os campos físicos (peso, dimensões).
+
+### 🛠️ PATCH (Atualização Parcial)
+*   **Finalidade:** Editar informações de um registro sem precisar enviar o objeto completo.
+*   **Endpoint Principal:**
+    *   `PATCH /produtos/{id}`: Permite alterar o nome ou a categoria de um produto existente.
+
+### 🗑️ DELETE (Remoção)
+*   **Finalidade:** Excluir registros do sistema.
+*   **Endpoint Principal:**
+    *   `DELETE /produtos/{id}`: Remove um produto permanentemente da base.
+
+---
+
+## ✨ Funcionalidades em Destaque
+
+### 📈 Smart Inventory Analytics
+Diferente de um simples CRUD, o RocketStore analisa o comportamento de cada item. Ao selecionar um produto, o sistema calcula automaticamente a **Popularidade**, o **Giro de Vendas** e a **Aprovação dos Clientes** com base em dados transacionais reais.
+
+### 🛡️ Validação Rigorosa de Dados
+Implementamos verificações tanto no Frontend quanto no Backend (via Pydantic) para garantir que campos obrigatórios (nome, categoria, peso e dimensões) nunca sejam deixados vazios ou com valores inválidos (como zero ou negativos).
+
+### 🌓 Design & UX Premium
+*   **Responsive Sidebar:** Navegação inteligente adaptada para qualquer tamanho de tela.
+*   **Framer Motion:** Micro-interações e animações suaves que dão vida à interface.
+*   **Atomic Design:** Código organizado e modular para facilidade de manutenção.
+
+---
+
+## 📝 Documentação Interativa
+O RocketStore utiliza o padrão **OpenAPI**. Ao acessar `/docs` no servidor do backend, você encontrará o Swagger UI completo, onde é possível testar cada endpoint diretamente pelo navegador, com exemplos de dados e descrições detalhadas de parâmetros.
+
+---
+
+Desevolvido pela **Equipe RocketLab** 🚀

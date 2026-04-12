@@ -64,12 +64,18 @@ export const ProductModal = ({
 
     const renderField = (label: string, field: keyof Produto, type: string = 'text') => (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <label style={{ fontSize: '10px', fontWeight: '900', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.1em', paddingLeft: '8px' }}>{label}</label>
+            <label style={{ fontSize: '10px', fontWeight: '900', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.1em', paddingLeft: '8px', display: 'flex', gap: '4px' }}>
+                {label} <span style={{ color: '#ef4444' }}>*</span>
+            </label>
             <input
                 type={type}
+                required
+                min={type === 'number' ? '0' : undefined}
+                step={type === 'number' ? 'any' : undefined}
                 value={editForm[field] || ''}
-                onChange={e => onFormChange({ ...editForm, [field]: type === 'number' ? Number(e.target.value) : e.target.value })}
+                onChange={e => onFormChange({ ...editForm, [field]: type === 'number' ? (e.target.value === '' ? '' : Number(e.target.value)) : e.target.value })}
                 style={{ width: '100%', backgroundColor: 'rgba(2, 6, 23, 0.6)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', padding: '16px', fontSize: '14px', color: 'white', outline: 'none', transition: 'all 0.3s' }}
+                className="focus:border-indigo-500/50"
             />
         </div>
     );
@@ -105,7 +111,9 @@ export const ProductModal = ({
                             </div>
 
                             <div style={{ position: 'relative' }}>
-                                <label style={{ fontSize: '10px', fontWeight: '900', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.1em', paddingLeft: '8px', display: 'block', marginBottom: '8px' }}>Categoria</label>
+                                <label style={{ fontSize: '10px', fontWeight: '900', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.1em', paddingLeft: '8px', display: 'flex', gap: '4px', marginBottom: '8px' }}>
+                                    Categoria <span style={{ color: '#ef4444' }}>*</span>
+                                </label>
                                 <input
                                     value={catQuery}
                                     onFocus={() => setShowSuggestions(true)}

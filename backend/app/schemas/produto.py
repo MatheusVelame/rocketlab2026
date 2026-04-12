@@ -5,10 +5,10 @@ class ProdutoBase(BaseModel):
     nome_produto: str
     categoria_produto: str
     url_imagem: Optional[str] = None
-    peso_produto_gramas: Optional[float] = None
-    comprimento_centimetros: Optional[float] = None
-    altura_centimetros: Optional[float] = None
-    largura_centimetros: Optional[float] = None
+    peso_produto_gramas: float
+    comprimento_centimetros: float
+    altura_centimetros: float
+    largura_centimetros: float
 
 class ProdutoCreate(ProdutoBase):
     id_produto: str

@@ -8,7 +8,7 @@ from sqlalchemy import func
 from pydantic import BaseModel
 from typing import List, Optional
 
-router = APIRouter(prefix="/dashboard", tags=["dashboard"])
+router = APIRouter(prefix="/dashboard", tags=["Dashboard"])
 
 class MonthlyRevenue(BaseModel):
     month: str
@@ -22,9 +22,15 @@ class DashboardStats(BaseModel):
     average_ticket: float
     total_customers: int
 
-@router.get("/", response_model=DashboardStats)
+@router.get("/", response_model=DashboardStats, summary="Obter visão geral do dashboard")
 def get_dashboard_summary(db: Session = Depends(get_db)):
-    # 1. Receita por Mês
+    """
+    Consolida as principais métricas de negócio para visualização gráfica:
+    * **Histórico de Receita** dos últimos 6 meses.
+    * **Distribuição de Status** de pedidos.
+    * **KPIs Financeiros** (Receita total, Ticket Médio).
+    * **Engajamento** (Total de clientes).
+    """
     revenue_query = db.query(
         func.strftime('%Y-%m', Pedido.pedido_compra_timestamp).label('month'),
         func.sum(ItemPedido.preco_BRL).label('revenue')
@@ -35,11 +41,9 @@ def get_dashboard_summary(db: Session = Depends(get_db)):
     
     history = [MonthlyRevenue(month=row[0], revenue=row[1]) for row in revenue_query if row[0]]
     
-    # 2. Distribuição de Status
     status_query = db.query(Pedido.status, func.count(Pedido.id_pedido)).group_by(Pedido.status).all()
     status_dist = {row[0]: row[1] for row in status_query}
     
-    # 3. KPIs Globais
     total_revenue = db.query(func.sum(ItemPedido.preco_BRL)).scalar() or 0.0
     total_orders = db.query(func.count(Pedido.id_pedido)).scalar() or 0
     total_customers = db.query(func.count(Consumidor.id_consumidor)).scalar() or 0

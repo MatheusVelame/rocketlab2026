@@ -19,23 +19,18 @@ export const Inventory = () => {
     const [isCreating, setIsCreating] = useState(false);
     const [editForm, setEditForm] = useState<Partial<Produto>>({});
 
-    // Cache simples em memória para evitar requests repetidos
     const analyticsCache = useRef<Record<string, ProductAnalytics>>({});
-    // Controle de requests em andamento para evitar duplicidade
     const pendingRequests = useRef<Record<string, Promise<ProductAnalytics>>>({});
 
     const fetchAnalytics = useCallback(async (productId: string) => {
-        // 1. Verificar Cache
         if (analyticsCache.current[productId]) {
             return analyticsCache.current[productId];
         }
 
-        // 2. Verificar se já existe um request para este ID
         if (pendingRequests.current[productId]) {
             return pendingRequests.current[productId];
         }
 
-        // 3. Fazer o Request
         const request = productApi.getAnalytics(productId);
         pendingRequests.current[productId] = request;
 
@@ -49,20 +44,17 @@ export const Inventory = () => {
     }, []);
 
     const handleProductMouseEnter = useCallback((product: Produto) => {
-        // Inicia a busca silenciosamente no hover
         fetchAnalytics(product.id_produto).catch(() => { });
     }, [fetchAnalytics]);
 
     const handleProductClick = async (product: Produto) => {
         setSelectedProduct(product);
 
-        // Se já tiver no cache, seta imediatamente (Instantâneo!)
         if (analyticsCache.current[product.id_produto]) {
             setProductAnalytics(analyticsCache.current[product.id_produto]);
             return;
         }
 
-        // Caso contrário, limpa o estado anterior e busca (com a vantagem do request talvez já estar em andamento pelo hover)
         setProductAnalytics(null);
         try {
             const data = await fetchAnalytics(product.id_produto);
@@ -73,20 +65,42 @@ export const Inventory = () => {
     };
 
     const handleSave = async () => {
+        const requiredFields: (keyof Produto)[] = [
+            'nome_produto',
+            'categoria_produto',
+            'peso_produto_gramas',
+            'comprimento_centimetros',
+            'altura_centimetros',
+            'largura_centimetros'
+        ];
+
+        const missingFields = requiredFields.filter(field => {
+            const value = editForm[field];
+            if (typeof value === 'string') return value.trim() === '';
+            if (typeof value === 'number') return value <= 0;
+            return value === undefined || value === null;
+        });
+
+        if (missingFields.length > 0) {
+            alert('Atenção: Todos os campos são obrigatórios e as dimensões/peso devem ser maiores que zero.');
+            return;
+        }
+
         try {
             if (isCreating) {
                 await productApi.create(editForm as Produto);
                 setIsCreating(false);
             } else if (selectedProduct) {
                 const updated = await productApi.update(selectedProduct.id_produto, editForm);
-                // Invalida cache após update
                 delete analyticsCache.current[selectedProduct.id_produto];
                 setSelectedProduct(updated);
                 setIsEditing(false);
             }
             loadProducts();
             loadGlobalStats();
-        } catch (error) { alert('Erro ao salvar: id já existe ou dados inválidos.'); }
+        } catch (error) {
+            alert('Erro ao salvar: verifique se os dados são válidos ou se o ID já existe.');
+        }
     };
 
     const handleDelete = async (id: string) => {
