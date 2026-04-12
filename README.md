@@ -32,12 +32,12 @@ Entre na pasta do backend e prepare o ambiente virtual:
 cd backend
 python -m venv venv
 source venv/bin/activate # No Linux
-venv\Scripts\activate # No Windows: 
+venv\Scripts\activate # No Windows
 pip install -r requirements.txt
 ```
 
 **Banco de Dados e Migrações:**
-O projeto utiliza **Alembic** para versionamento do banco e scripts de **Seed** para popular dados reais a partir de bases CSV.
+O projeto utiliza **Alembic** para versionamento do banco e scripts de **Seed** para popular dados reais a partir de bases CSV (Olist Dataset).
 
 ```bash
 # Sincroniza a estrutura do banco
@@ -64,7 +64,7 @@ cd frontend
 pnpm install
 ```
 
-**Iniciando o Dashboad:**
+**Iniciando o Dashboard:**
 ```bash
 pnpm dev
 ```
@@ -72,39 +72,63 @@ pnpm dev
 
 ---
 
-## 📡 Guia da API (FastAPI)
+## 📡 Documentação Detalhada da API
 
-A API do RocketStore foi desenhada seguindo as melhores práticas REST. Abaixo, uma explicação dos métodos utilizados:
+Abaixo estão listados todos os endpoints disponíveis no sistema, organizados por suas funcionalidades principais.
 
-### 🔍 GET (Busca e Listagem)
-*   **Finalidade:** Consultar informações existentes.
-*   **Endpoints Principais:**
-    *   `GET /`: Health Check para verificar se a API está online.
-    *   `GET /produtos/`: Lista o catálogo com suporte a **Busca Textual** e **Paginação**.
-    *   `GET /produtos/categorias`: Retorna todas as categorias únicas cadastradas para filtros no frontend.
-    *   `GET /dashboard/`: Retorna KPIs globais (Receita total, histórico de 6 meses, etc).
-    *   `GET /produtos/{id}/analytics`: Fornece uma análise 360º de um item específico.
+### � Painel de Controle (Dashboard)
+Analisa a saúde global do negócio em tempo real.
+*   `GET /dashboard/`: Consolida métricas de receita (últimos 6 meses), distribuição de status de pedidos e KPIs como Ticket Médio.
 
-### ➕ POST (Criação)
-*   **Finalidade:** Registrar novos dados no sistema.
-*   **Endpoint Principal:**
-    *   `POST /produtos/`: Cadastra um novo produto. Requer validação de todos os campos físicos (peso, dimensões).
+### 📦 Catálogo de Produtos (Produtos)
+Gerenciamento completo e análise individual de itens.
+*   `GET /produtos/`: Lista produtos com suporte a busca textual (`q`) e paginação facilitada.
+*   `GET /produtos/stats/global`: KPIs rápidos (Receita total, volume de vendas, produto mais popular).
+*   `GET /produtos/categorias`: Lista todas as categorias únicas cadastradas no banco.
+*   `GET /produtos/{id}`: Detalhes técnicos completos de um produto específico.
+*   `POST /produtos/`: Cadastro de novos produtos com validação de dimensões.
+*   `PATCH /produtos/{id}`: Edição parcial de dados do produto.
+*   `DELETE /produtos/{id}`: Remoção permanente de itens do catálogo.
+*   `GET /produtos/{id}/analytics`: Inteligência de produto, histórico de vendas e nota média dos consumidores.
 
-### 🛠️ PATCH (Atualização Parcial)
-*   **Finalidade:** Editar informações de um registro sem precisar enviar o objeto completo.
-*   **Endpoint Principal:**
-    *   `PATCH /produtos/{id}`: Permite alterar o nome ou a categoria de um produto existente.
+### 👥 Gestão de Clientes (Consumidores)
+Visualização da base de usuários e localização.
+*   `GET /clientes/`: Listagem paginada com filtros por **Nome**, **Cidade** e **Estado**.
+*   `GET /clientes/{id}`: Perfil detalhado do consumidor.
 
-### 🗑️ DELETE (Remoção)
-*   **Finalidade:** Excluir registros do sistema.
-*   **Endpoint Principal:**
-    *   `DELETE /produtos/{id}`: Remove um produto permanentemente da base.
+### 🏪 Parceiros de Venda (Vendedores)
+Monitoramento de lojistas cadastrados.
+*   `GET /vendedores/`: Lista vendedores filtrando por localização geográfica.
+*   `GET /vendedores/{id}`: Detalhes do parceiro.
+
+### 📑 Transações (Itens Pedidos)
+Detalhamento de cada item transacionado na plataforma.
+*   `GET /itens-pedidos/`: Histórico de vendas com filtros avançados de **Data de Início/Fim**, **Status** (bilingue) e busca por ID do pedido.
+*   `GET /itens-pedidos/{id_pedido}/{id_item}/detalhes`: Visão 360º de uma transação específica (Logística, comprador e vendedor).
+
+### 🏥 Sistema (Health)
+*   `GET /`: Verifica se os serviços da API estão operacionais.
 
 ---
 
-## 📝 Documentação Interativa
-O RocketStore utiliza o padrão **OpenAPI**. Ao acessar `/docs` no servidor do backend, você encontrará o Swagger UI completo, onde é possível testar cada endpoint diretamente pelo navegador, com exemplos de dados e descrições detalhadas de parâmetros.
+## ✨ Funcionalidades em Destaque
+
+### 📈 Smart Inventory Analytics
+Diferente de um simples CRUD, o RocketStore analisa o comportamento de cada item. Ao selecionar um produto, o sistema calcula automaticamente a **Popularidade**, o **Giro de Vendas** e a **Aprovação dos Clientes** com base em dados transacionais reais.
+
+### 🛡️ Validação Rigorosa de Dados
+Nenhum dado entra "sujo" no sistema. Implementamos verificações via **Pydantic** no Backend e validações dinâmicas no Frontend para garantir que campos obrigatórios (nome, categoria, peso e dimensões) sejam sempre válidos e positivos.
+
+### 🌓 Design & UX Premium
+*   **Responsive Sidebar:** Navegação inteligente adaptada para qualquer tamanho de tela.
+*   **Framer Motion:** Micro-interações e animações suaves que dão vida à interface.
+*   **Atomic Design:** Código organizado e modular para facilidade de manutenção.
 
 ---
 
-Desevolvido por **Matheus Velame** 🚀
+## 📝 Documentação Swagger
+O RocketStore utiliza o padrão **OpenAPI**. Ao acessar `/docs` no servidor do backend, você encontrará o Swagger UI interativo, onde é possível testar cada endpoint diretamente pelo navegador.
+
+---
+
+Desenvolvido por **Matheus Velame** 🚀
