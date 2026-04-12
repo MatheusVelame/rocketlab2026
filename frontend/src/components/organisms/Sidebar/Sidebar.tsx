@@ -90,11 +90,11 @@ export const Sidebar = ({
                 </div>
 
                 {!isCollapsed && currentView === 'estoque' && (
-                    <div className="mt-8">
-                        <Typography variant="caption" color="#1e293b" className="px-4 mb-4" uppercase>
+                    <div className="mt-8 flex flex-col gap-4">
+                        <Typography variant="caption" color="#475569" className="px-4" uppercase>
                             Categorias
                         </Typography>
-                        <div className="flex flex-col gap-1 max-h-[400px] overflow-y-auto scrollbar-hide">
+                        <div className="flex flex-col gap-1 max-h-[350px] overflow-y-auto scrollbar-hide border border-white/5 bg-white/[0.02] rounded-3xl p-2 mx-1">
                             <CategoryItem
                                 label="Todos os Itens"
                                 isActive={selectedCategory === ''}
