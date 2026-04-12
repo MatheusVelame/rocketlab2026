@@ -31,7 +31,8 @@ Entre na pasta do backend e prepare o ambiente virtual:
 ```bash
 cd backend
 python -m venv venv
-source venv/bin/activate  # No Windows: venv\Scripts\activate
+source venv/bin/activate # No Linux
+venv\Scripts\activate # No Windows: 
 pip install -r requirements.txt
 ```
 
@@ -101,24 +102,9 @@ A API do RocketStore foi desenhada seguindo as melhores práticas REST. Abaixo, 
 
 ---
 
-## ✨ Funcionalidades em Destaque
-
-### 📈 Smart Inventory Analytics
-Diferente de um simples CRUD, o RocketStore analisa o comportamento de cada item. Ao selecionar um produto, o sistema calcula automaticamente a **Popularidade**, o **Giro de Vendas** e a **Aprovação dos Clientes** com base em dados transacionais reais.
-
-### 🛡️ Validação Rigorosa de Dados
-Implementamos verificações tanto no Frontend quanto no Backend (via Pydantic) para garantir que campos obrigatórios (nome, categoria, peso e dimensões) nunca sejam deixados vazios ou com valores inválidos (como zero ou negativos).
-
-### 🌓 Design & UX Premium
-*   **Responsive Sidebar:** Navegação inteligente adaptada para qualquer tamanho de tela.
-*   **Framer Motion:** Micro-interações e animações suaves que dão vida à interface.
-*   **Atomic Design:** Código organizado e modular para facilidade de manutenção.
-
----
-
 ## 📝 Documentação Interativa
 O RocketStore utiliza o padrão **OpenAPI**. Ao acessar `/docs` no servidor do backend, você encontrará o Swagger UI completo, onde é possível testar cada endpoint diretamente pelo navegador, com exemplos de dados e descrições detalhadas de parâmetros.
 
 ---
 
-Desevolvido pela **Equipe RocketLab** 🚀
+Desevolvido por **Matheus Velame** 🚀
