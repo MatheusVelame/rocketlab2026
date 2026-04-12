@@ -5,13 +5,15 @@ import type { Produto } from '../../../types';
 interface ProductCardProps {
     produto: Produto;
     onClick: () => void;
+    onMouseEnter?: () => void;
 }
 
-export const ProductCard = memo(({ produto, onClick }: ProductCardProps) => {
+export const ProductCard = memo(({ produto, onClick, onMouseEnter }: ProductCardProps) => {
     return (
         <motion.div
             whileHover={{ y: -5 }}
             onClick={onClick}
+            onMouseEnter={onMouseEnter}
             style={{
                 backgroundColor: 'rgba(15, 23, 42, 0.4)',
                 borderRadius: '32px',
@@ -19,15 +21,15 @@ export const ProductCard = memo(({ produto, onClick }: ProductCardProps) => {
                 padding: '16px',
                 cursor: 'pointer',
                 transition: 'all 0.3s',
-                willChange: 'transform', // Otimização para GPU
-                contentVisibility: 'auto' // Otimização de renderização do Chrome
+                willChange: 'transform',
+                contentVisibility: 'auto'
             }}
         >
             <div style={{ aspectRatio: '1/1', borderRadius: '24px', overflow: 'hidden', marginBottom: '16px', backgroundColor: '#020617', border: '1px solid rgba(255,155,255,0.05)' }}>
                 <img
                     src={produto.url_imagem}
                     alt={produto.nome_produto}
-                    loading="lazy" // Carregamento sob demanda
+                    loading="lazy"
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
             </div>

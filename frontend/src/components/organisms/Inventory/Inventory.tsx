@@ -10,6 +10,7 @@ interface InventoryProps {
     totalPages: number;
     selectedCategory: string;
     onProductClick: (p: Produto) => void;
+    onProductMouseEnter?: (p: Produto) => void;
     onPageChange: (p: number) => void;
     renderPagination: (current: number, total: number, onChange: (p: number) => void) => ReactNode;
 }
@@ -21,6 +22,7 @@ export const Inventory = memo(({
     totalPages,
     selectedCategory,
     onProductClick,
+    onProductMouseEnter,
     onPageChange,
     renderPagination
 }: InventoryProps) => {
@@ -54,10 +56,15 @@ export const Inventory = memo(({
                     display: 'grid',
                     gridTemplateColumns: 'repeat(5, 1fr)',
                     gap: '24px',
-                    contain: 'layout' // Otimização de renderização
+                    contain: 'layout'
                 }}>
                     {produtos.map(p => (
-                        <ProductCard key={p.id_produto} produto={p} onClick={() => onProductClick(p)} />
+                        <ProductCard
+                            key={p.id_produto}
+                            produto={p}
+                            onClick={() => onProductClick(p)}
+                            onMouseEnter={() => onProductMouseEnter?.(p)}
+                        />
                     ))}
                 </div>
 

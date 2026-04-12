@@ -74,6 +74,14 @@ export const ProductModal = ({
         </div>
     );
 
+    const Skeleton = ({ width = '100%', height = '20px' }) => (
+        <motion.div
+            animate={{ opacity: [0.3, 0.6, 0.3] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+            style={{ width, height, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: '4px' }}
+        />
+    );
+
     return (
         <div style={{
             position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', backgroundColor: 'rgba(2, 6, 23, 0.9)', backdropFilter: 'blur(40px)'
@@ -168,7 +176,7 @@ export const ProductModal = ({
                             <div style={{ aspectRatio: '1/1', borderRadius: '56px', overflow: 'hidden', backgroundColor: '#020617', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}>
                                 <img src={product.url_imagem} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                             </div>
-                            {analytics && (() => {
+                            {analytics ? (() => {
                                 const insight = getSmartInsight(analytics);
                                 return (
                                     <div style={{
@@ -183,7 +191,13 @@ export const ProductModal = ({
                                         <p style={{ fontSize: '14px', fontWeight: '700', lineHeight: 1.6, fontStyle: 'italic', margin: 0 }}>“{insight.text}”</p>
                                     </div>
                                 );
-                            })()}
+                            })() : (
+                                <div style={{ padding: '32px', borderRadius: '40px', backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}>
+                                    <Skeleton width="100px" height="12px" />
+                                    <div style={{ height: '16px' }} />
+                                    <Skeleton width="100%" height="40px" />
+                                </div>
+                            )}
                         </div>
                         <div style={{ gridColumn: 'span 8', display: 'flex', flexDirection: 'column', gap: '40px', paddingTop: '24px' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -199,15 +213,17 @@ export const ProductModal = ({
                             <div style={{ gridColumn: 'span 8', display: 'flex', flexDirection: 'column', gap: '32px' }}>
                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
                                     {[
-                                        { l: 'Vendas Totais', v: analytics?.performance.total_vendas || 0, i: icons.sales, c: '#818cf8' },
-                                        { l: 'Preço Médio', v: `R$ ${Math.round(analytics?.performance.preco_medio || 0).toLocaleString()}`, i: icons.trending, c: '#10b981' },
-                                        { l: 'Nota Média', v: analytics?.performance.avaliacao_media.toFixed(1) || '0.0', i: icons.star, c: '#f59e0b' },
+                                        { l: 'Vendas Totais', v: analytics?.performance.total_vendas, i: icons.sales, c: '#818cf8', raw: true },
+                                        { l: 'Preço Médio', v: analytics?.performance.preco_medio ? `R$ ${Math.round(analytics.performance.preco_medio).toLocaleString()}` : null, i: icons.trending, c: '#10b981' },
+                                        { l: 'Nota Média', v: analytics?.performance.avaliacao_media ? analytics.performance.avaliacao_media.toFixed(1) : null, i: icons.star, c: '#f59e0b' },
                                         { l: 'Peso (g)', v: `${product.peso_produto_gramas}`, i: icons.box, c: '#c084fc' },
                                     ].map((s, i) => (
                                         <div key={i} style={{ backgroundColor: 'rgba(2, 6, 23, 0.6)', padding: '20px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.05)', textAlign: 'center' }}>
                                             <div style={{ color: s.c, marginBottom: '8px', display: 'flex', justifyContent: 'center' }}>{s.i}</div>
                                             <p style={{ fontSize: '9px', fontWeight: '900', color: '#64748b', textTransform: 'uppercase', marginBottom: '4px', margin: 0 }}>{s.l}</p>
-                                            <h4 style={{ fontSize: '18px', fontWeight: '900', color: 'white', margin: 0 }}>{s.v}</h4>
+                                            <h4 style={{ fontSize: '18px', fontWeight: '900', color: 'white', margin: 0 }}>
+                                                {s.v !== undefined && s.v !== null ? s.v : <Skeleton width="100%" height="22px" />}
+                                            </h4>
                                         </div>
                                     ))}
                                 </div>
@@ -234,19 +250,19 @@ export const ProductModal = ({
                                                 {[
                                                     {
                                                         label: 'Aprovação dos Clientes',
-                                                        val: (analytics?.performance.avaliacao_media || 0) * 20,
+                                                        val: analytics ? (analytics?.performance.avaliacao_media || 0) * 20 : null,
                                                         color: '#f59e0b',
                                                         hint: 'Calculado com base na nota média (0 a 5) dada pelos consumidores.'
                                                     },
                                                     {
                                                         label: 'Giro de Vendas',
-                                                        val: Math.min(((analytics?.performance.total_vendas || 0) / 50) * 100, 100),
+                                                        val: analytics ? Math.min(((analytics?.performance.total_vendas || 0) / 50) * 100, 100) : null,
                                                         color: '#10b981',
                                                         hint: 'Mede a velocidade de saída do estoque em relação à meta de giro (50 un.).'
                                                     },
                                                     {
                                                         label: 'Popularidade do Item',
-                                                        val: Math.min(((analytics?.performance.total_avaliacoes || 0) / 10) * 100, 100),
+                                                        val: analytics ? Math.min(((analytics?.performance.total_avaliacoes || 0) / 10) * 100, 100) : null,
                                                         color: '#8b5cf6',
                                                         hint: 'Reflete o volume total de engajamento e feedbacks recebidos.'
                                                     },
@@ -257,15 +273,19 @@ export const ProductModal = ({
                                                                 {bar.label}
                                                                 <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></svg>
                                                             </span>
-                                                            <span style={{ fontSize: '11px', fontWeight: '900', color: 'white' }}>{Math.round(bar.val)}%</span>
+                                                            <span style={{ fontSize: '11px', fontWeight: '900', color: 'white' }}>
+                                                                {bar.val !== null ? `${Math.round(bar.val!)}%` : <Skeleton width="30px" height="12px" />}
+                                                            </span>
                                                         </div>
                                                         <div style={{ height: '8px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '999px', overflow: 'hidden' }}>
-                                                            <motion.div
-                                                                initial={{ width: 0 }}
-                                                                animate={{ width: `${bar.val}%` }}
-                                                                transition={{ delay: 0.5 + i * 0.1, duration: 1 }}
-                                                                style={{ height: '100%', backgroundColor: bar.color, borderRadius: '999px', boxShadow: `0 0 10px ${bar.color}40` }}
-                                                            />
+                                                            {bar.val !== null ? (
+                                                                <motion.div
+                                                                    initial={{ width: 0 }}
+                                                                    animate={{ width: `${bar.val}%` }}
+                                                                    transition={{ delay: 0.5 + i * 0.1, duration: 1 }}
+                                                                    style={{ height: '100%', backgroundColor: bar.color, borderRadius: '999px', boxShadow: `0 0 10px ${bar.color}40` }}
+                                                                />
+                                                            ) : <Skeleton width="100%" height="100%" />}
                                                         </div>
                                                     </div>
                                                 ))}
@@ -275,7 +295,7 @@ export const ProductModal = ({
                                     <div style={{ backgroundColor: 'rgba(2, 6, 23, 0.4)', borderRadius: '40px', border: '1px solid rgba(255,255,255,0.1)', padding: '32px', display: 'flex', flexDirection: 'column', height: '100%', maxHeight: '420px' }}>
                                         <p style={{ fontSize: '10px', fontWeight: '900', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px', margin: 0 }}>Reviews Sugeridas</p>
                                         <div style={{ flex: 1, overflowY: 'auto', paddingRight: '8px', display: 'flex', flexDirection: 'column', gap: '12px' }} className="scrollbar-hide">
-                                            {analytics?.ultimas_avaliacoes && analytics.ultimas_avaliacoes.length > 0 ? analytics.ultimas_avaliacoes.map((rev, i) => (
+                                            {analytics ? (analytics.ultimas_avaliacoes && analytics.ultimas_avaliacoes.length > 0 ? analytics.ultimas_avaliacoes.map((rev, i) => (
                                                 <div key={i} style={{ padding: '16px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '10px', fontWeight: '900', color: '#f59e0b' }}>
                                                         <div style={{ display: 'flex', gap: '2px' }}>
@@ -290,6 +310,10 @@ export const ProductModal = ({
                                             )) : (
                                                 <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#475569', fontSize: '12px', fontStyle: 'italic' }}>
                                                     Nenhuma avaliação registrada ainda.
+                                                </div>
+                                            )) : (
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                                    {[1, 2, 3].map(i => <div key={i} style={{ padding: '16px', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: '24px' }}><Skeleton height="40px" /></div>)}
                                                 </div>
                                             )}
                                         </div>

@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useState, type ReactNode, useCallback, useRef } from 'react';
 import { DefaultTemplate } from '../../components/templates/DefaultTemplate';
 import { Inventory as InventoryOrganism } from '../../components/organisms/Inventory';
 import { ProductModal } from '../../components/organisms/ProductModal';
@@ -19,13 +19,57 @@ export const Inventory = () => {
     const [isCreating, setIsCreating] = useState(false);
     const [editForm, setEditForm] = useState<Partial<Produto>>({});
 
+    // Cache simples em memória para evitar requests repetidos
+    const analyticsCache = useRef<Record<string, ProductAnalytics>>({});
+    // Controle de requests em andamento para evitar duplicidade
+    const pendingRequests = useRef<Record<string, Promise<ProductAnalytics>>>({});
+
+    const fetchAnalytics = useCallback(async (productId: string) => {
+        // 1. Verificar Cache
+        if (analyticsCache.current[productId]) {
+            return analyticsCache.current[productId];
+        }
+
+        // 2. Verificar se já existe um request para este ID
+        if (pendingRequests.current[productId]) {
+            return pendingRequests.current[productId];
+        }
+
+        // 3. Fazer o Request
+        const request = productApi.getAnalytics(productId);
+        pendingRequests.current[productId] = request;
+
+        try {
+            const data = await request;
+            analyticsCache.current[productId] = data;
+            return data;
+        } finally {
+            delete pendingRequests.current[productId];
+        }
+    }, []);
+
+    const handleProductMouseEnter = useCallback((product: Produto) => {
+        // Inicia a busca silenciosamente no hover
+        fetchAnalytics(product.id_produto).catch(() => { });
+    }, [fetchAnalytics]);
+
     const handleProductClick = async (product: Produto) => {
         setSelectedProduct(product);
+
+        // Se já tiver no cache, seta imediatamente (Instantâneo!)
+        if (analyticsCache.current[product.id_produto]) {
+            setProductAnalytics(analyticsCache.current[product.id_produto]);
+            return;
+        }
+
+        // Caso contrário, limpa o estado anterior e busca (com a vantagem do request talvez já estar em andamento pelo hover)
         setProductAnalytics(null);
         try {
-            const data = await productApi.getAnalytics(product.id_produto);
+            const data = await fetchAnalytics(product.id_produto);
             setProductAnalytics(data);
-        } catch (error) { console.error(error); }
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     const handleSave = async () => {
@@ -35,6 +79,8 @@ export const Inventory = () => {
                 setIsCreating(false);
             } else if (selectedProduct) {
                 const updated = await productApi.update(selectedProduct.id_produto, editForm);
+                // Invalida cache após update
+                delete analyticsCache.current[selectedProduct.id_produto];
                 setSelectedProduct(updated);
                 setIsEditing(false);
             }
@@ -47,6 +93,7 @@ export const Inventory = () => {
         if (!confirm('Deseja realmente excluir este produto?')) return;
         try {
             await productApi.delete(id);
+            delete analyticsCache.current[id];
             setSelectedProduct(null);
             loadProducts();
             loadGlobalStats();
@@ -115,6 +162,7 @@ export const Inventory = () => {
                 totalPages={totalPages}
                 selectedCategory={selectedCategory}
                 onProductClick={handleProductClick}
+                onProductMouseEnter={handleProductMouseEnter}
                 onPageChange={setPage}
                 renderPagination={renderPagination}
             />
