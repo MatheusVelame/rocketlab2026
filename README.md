@@ -29,6 +29,7 @@ Siga os passos abaixo para subir o ambiente completo localmente.
 Entre na pasta do backend e prepare o ambiente virtual:
 
 ```bash
+cd backend
 python -m venv venv
 ```
 
