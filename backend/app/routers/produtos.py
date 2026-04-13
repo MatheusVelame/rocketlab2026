@@ -188,7 +188,7 @@ def get_produto_analytics(
         ItemPedidoModel.id_produto == id_produto
     ).order_by(
         AvaliacaoPedidoModel.data_comentario.desc()
-    ).limit(5).all()
+    ).all()
 
     return ProductAnalytics(
         id_produto=db_produto.id_produto,

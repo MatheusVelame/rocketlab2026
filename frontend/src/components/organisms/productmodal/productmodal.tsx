@@ -300,7 +300,7 @@ export const ProductModal = ({
                                         </div>
                                     </div>
                                     <div style={{ backgroundColor: 'rgba(2, 6, 23, 0.4)', borderRadius: '40px', border: '1px solid rgba(255,255,255,0.1)', padding: '32px', display: 'flex', flexDirection: 'column', height: '100%', maxHeight: '420px' }}>
-                                        <p style={{ fontSize: '10px', fontWeight: '900', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px', margin: 0 }}>Reviews Sugeridas</p>
+                                        <p style={{ fontSize: '10px', fontWeight: '900', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px', margin: 0 }}>Histórico de Avaliações</p>
                                         <div style={{ flex: 1, overflowY: 'auto', paddingRight: '8px', display: 'flex', flexDirection: 'column', gap: '12px' }} className="scrollbar-hide">
                                             {analytics ? (analytics.ultimas_avaliacoes && analytics.ultimas_avaliacoes.length > 0 ? analytics.ultimas_avaliacoes.map((rev, i) => (
                                                 <div key={i} style={{ padding: '16px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
