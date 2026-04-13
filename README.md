@@ -74,8 +74,7 @@ O projeto conta com uma suíte de testes de integração que utiliza um banco de
 
 ```bash
 # Dentro da pasta /backend
-export PYTHONPATH=$PYTHONPATH:.
-pytest tests/
+python -m pytest tests/
 ```
 
 ---
@@ -87,6 +86,7 @@ Em um novo terminal, entre na pasta do frontend e instale as dependências:
 
 ```bash
 cd frontend
+cp .env.example .env
 pnpm install
 ```
 
