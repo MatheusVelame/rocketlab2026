@@ -4,7 +4,6 @@ from app.models.consumidor import Consumidor
 from datetime import datetime
 
 def test_dashboard_summary(client, db):
-    # Setup: Criar dados para o dashboard
     consumidor = Consumidor(id_consumidor="c1", prefixo_cep="12345", nome_consumidor="User 1", cidade="Curitiba", estado="PR")
     db.add(consumidor)
     

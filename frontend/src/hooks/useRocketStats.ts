@@ -21,7 +21,6 @@ export const useRocketStats = (currentView: string, search: string = '', filters
 
     const loadClientes = useCallback(async () => {
         try {
-            // Suporta q, skip, estado, cidade
             const data = await productApi.listClientes(search, page * PAGE_SIZE, filters.estado, filters.cidade);
             setClientes(data.items);
             setTotalPages(data.pages);
@@ -30,7 +29,6 @@ export const useRocketStats = (currentView: string, search: string = '', filters
 
     const loadVendedores = useCallback(async () => {
         try {
-            // Suporta q, skip, estado, cidade
             const data = await productApi.listVendedores(search, page * PAGE_SIZE, filters.estado, filters.cidade);
             setVendedores(data.items);
             setTotalPages(data.pages);

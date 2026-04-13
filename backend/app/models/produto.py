@@ -19,7 +19,6 @@ class Produto(Base):
     altura_centimetros: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     largura_centimetros: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
 
-    # Relacionamento para pegar a imagem
     imagem: Mapped[Optional["CategoriaImagem"]] = relationship(lazy="joined")
 
     @property

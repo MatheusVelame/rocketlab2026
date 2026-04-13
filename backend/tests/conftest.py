@@ -7,7 +7,6 @@ from fastapi.testclient import TestClient
 from app.main import app
 from app.database import Base, get_db
 
-# Configura um banco SQLite em memória para os testes
 SQLALCHEMY_DATABASE_URL = "sqlite://"
 
 engine = create_engine(
@@ -20,14 +19,12 @@ TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engin
 
 @pytest.fixture(scope="function")
 def db():
-    # Cria as tabelas antes de cada teste
     Base.metadata.create_all(bind=engine)
     session = TestingSessionLocal()
     try:
         yield session
     finally:
         session.close()
-        # Remove as tabelas após o teste
         Base.metadata.drop_all(bind=engine)
 
 
