@@ -86,8 +86,12 @@ Em um novo terminal, entre na pasta do frontend e instale as dependências:
 
 ```bash
 cd frontend
-cp .env.example .env
 pnpm install
+```
+
+Configure as variáveis de ambiente
+```bash
+cp .env.example .env
 ```
 
 **Iniciando o Dashboard:**
