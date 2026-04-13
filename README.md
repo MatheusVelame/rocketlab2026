@@ -56,7 +56,17 @@ python -m app.main
 ```
 > Acesse a documentação técnica em: [http://localhost:8000/docs](http://localhost:8000/docs)
 
+**🧪 Testes Automatizados (Backend):**
+O projeto conta com uma suíte de testes de integração que utiliza um banco de dados SQLite em memória para garantir a velocidade e isolamento dos testes.
+
+```bash
+# Dentro da pasta /backend
+export PYTHONPATH=$PYTHONPATH:.
+pytest tests/
+```
+
 ---
+
 
 ### 🎨 2. Configurando o Frontend
 

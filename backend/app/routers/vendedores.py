@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Query, Path
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.vendedor import Vendedor as VendedorModel
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import List, Optional
 
 router = APIRouter(prefix="/vendedores", tags=["Vendedores"])
@@ -14,8 +14,8 @@ class VendedorSchema(BaseModel):
     cidade: Optional[str] = None
     estado: Optional[str] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
+
 
 class PaginatedVendedores(BaseModel):
     items: List[VendedorSchema]
