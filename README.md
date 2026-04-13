@@ -29,14 +29,26 @@ Siga os passos abaixo para subir o ambiente completo localmente.
 Entre na pasta do backend e prepare o ambiente virtual:
 
 ```bash
-cd backend
 python -m venv venv
+```
 
-source venv/bin/activate # No Linux
-ou
-venv\Scripts\activate # No Windows
+Windows:
+```bash
+venv\Scripts\activate
+```
 
+Mac/Linux:
+```bash
+source venv/bin/activate
+```
+
+```bash
 pip install -r requirements.txt
+```
+
+Configure as variáveis de ambiente
+```bash
+cp .env.example .env
 ```
 
 **Banco de Dados e Migrações:**
