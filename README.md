@@ -43,6 +43,7 @@ Mac/Linux:
 source venv/bin/activate
 ```
 
+Instale as dependências
 ```bash
 pip install -r requirements.txt
 ```
